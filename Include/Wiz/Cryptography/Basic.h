@@ -1,9 +1,9 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/03/01
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_CRYPTOGRAPHY_SIMPLE_H__
-#define __WIZ_CRYPTOGRAPHY_SIMPLE_H__
+#ifndef __WIZ_CRYPTOGRAPHY_BASIC_H__
+#define __WIZ_CRYPTOGRAPHY_BASIC_H__
 
 #include "Wiz/String/StringT.h"
 #include <WinCrypt.h>
