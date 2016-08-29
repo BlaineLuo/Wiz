@@ -327,7 +327,7 @@ public:
 		lvColumn.pszText = name;
 		lvColumn.cx = width;
 		lvColumn.fmt = format;
-		if( ListView_InsertColumn( *this, indexCol, &lvColumn ) == -1 )
+		if( -1 == ListView_InsertColumn( *this, indexCol, &lvColumn ) )
 			return false;
 
 		Column column;
@@ -441,6 +441,15 @@ public:
 		Rect rect;
 		this->getItemRect( 0, 0, rect );
 		return( 0 != ListView_Scroll( *this, 0, ( rect->bottom - rect->top ) * indexRow ) );
+	}
+
+	bool setColumn( int indexCol, PTCHAR name, int width = 100 ){
+		LVCOLUMN lvColumn = {0};
+		lvColumn.mask = LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
+		lvColumn.iSubItem = indexCol;
+		lvColumn.pszText = name;
+		lvColumn.cx = width;
+		return( 0 != ListView_SetColumn( *this, indexCol, &lvColumn ) );
 	}
 
 	bool setColumnColor( int indexCol, COLORREF colorText, COLORREF colorTextBk ){
