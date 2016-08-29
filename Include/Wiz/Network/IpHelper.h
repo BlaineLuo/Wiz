@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Windows IP Helper API
-// @Author	Blaine
-// @Date	2015/02/28
+// @Brief: Windows IP Helper API
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_NETWORK_IPHELPER_H__
 #define __WIZ_NETWORK_IPHELPER_H__

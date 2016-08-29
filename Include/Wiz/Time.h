@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Time Classes 
-// @Author	Blaine
-// @Date	2014/05/06
+// @Brief: Time Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_TIME_H__
 #define __WIZ_TIME_H__

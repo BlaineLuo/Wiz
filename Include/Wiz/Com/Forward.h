@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Windows COM Classes 
-// @Author	Blaine
-// @Date	2014/03/24
+// @Brief: Windows COM Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_COM_FORWARD_H__
 #define __WIZ_COM_FORWARD_H__
@@ -26,7 +26,7 @@ class Startup{
 };
 
 // ============================================================
-// @Brief	COM Object Base
+// @Brief: COM Object Base
 // ============================================================
 template< typename T >
 class ComObject : public HandleT< T*, NULL >{

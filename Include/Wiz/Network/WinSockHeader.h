@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Include WinSock Header safety
-// @Author	Blaine
-// @Date	2015/08
+// @Brief: Include WinSock Header safety
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_NETWORK_WINSOCKETHEADER_H__
 #define __WIZ_NETWORK_WINSOCKETHEADER_H__

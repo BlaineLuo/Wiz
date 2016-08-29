@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Windows Internet Classes
-// @Author	Blaine
-// @Date	2014/02/06
+// @Brief: Windows Internet Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_NETWORK_INTERNET_H__
 #define __WIZ_NETWORK_INTERNET_H__

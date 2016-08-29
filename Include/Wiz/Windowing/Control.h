@@ -1,17 +1,17 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/03/04
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_WINDOWING_CONTROL_H__
 #define __WIZ_WINDOWING_CONTROL_H__
 
-#include "Forward.h"
+#include "Wiz/Windowing/Forward.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
 
 // ============================================================
-// @Brief	Base of Control
+// @Brief: Base of Control
 // ============================================================
 class Control : public Window{
 

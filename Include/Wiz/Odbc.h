@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Win32 ODBC Classes 
-// @Author	Blaine
-// @Date	2014/03/24
+// @Brief: Win32 ODBC Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_ODBC_H__
 #define __WIZ_ODBC_H__
@@ -115,7 +115,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Diag Queue for handle error.
+// @Brief: Diag Queue for handle error.
 // ============================================================
 struct DiagEntry{
 	LONG _nativeCode;
@@ -168,7 +168,7 @@ public:
 };
 
 // ============================================================
-// @Brief	SQL Handle Base Class
+// @Brief: SQL Handle Base Class
 // ============================================================
 template< short HandleType >
 class Handle : public HandleT< SQLHANDLE, SQL_NULL_HANDLE >{

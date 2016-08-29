@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	GDI+ Classes (for Win32)
-// @Author	Blaine
-// @Date	2015/08
+// @Brief: GDI+ Classes (for Win32)
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_GRAPHING_GDIEX_H__
 #define __WIZ_GRAPHING_GDIEX_H__
@@ -25,7 +25,7 @@ static TCHAR const MimeTypeTiff[] = _T("image/tiff");
 static TCHAR const MimeTypePng[] = _T("image/png");
 
 // ============================================================
-// @Brief	GDI+ Startup
+// @Brief: GDI+ Startup
 // ============================================================
 class Startup{
 
@@ -111,7 +111,7 @@ public:
 };
 
 // ============================================================
-// @Brief	GDI+ Bitmap Class
+// @Brief: GDI+ Bitmap Class
 // ============================================================
 class BitmapEx : public HandleP< Gdiplus::Bitmap >{
 public:

@@ -1,11 +1,11 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/03/01
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_BASE_MAP_H__
 #define __WIZ_BASE_MAP_H__
 
-#include "Forward.h"
+#include "Wiz/Base/Forward.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Base{

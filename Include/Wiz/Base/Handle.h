@@ -1,17 +1,17 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/03/01
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_BASE_HANDLE_H__
 #define __WIZ_BASE_HANDLE_H__
 
-#include "Forward.h"
+#include "Wiz/Base/Forward.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Base{
 
 // ============================================================
-// @Brief	Handle Template
+// @Brief: Handle Template
 // ============================================================
 template< typename T, T NullHandle >
 class HandleT{
@@ -67,9 +67,9 @@ public:
 };
 
 // ============================================================
-// @Brief	Handle Pointer Template
-// @Note	This Pointer Template only handle
-//			Pointer once, it has no reference count.
+// @Brief: Handle Pointer Template
+// @Note: This Pointer Template only handle
+//        Pointer once, it has no reference count.
 // ============================================================
 template< typename T >
 class HandleP : public HandleT< T*, NULL >{

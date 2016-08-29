@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Winsock IO Control API
-// @Author	Blaine
-// @Date	2014/03/24
+// @Brief: Winsock IO Control API
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_NETWORK_SOCKIO_H__
 #define __WIZ_NETWORK_SOCKIO_H__
@@ -122,7 +122,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Message-Based Socket Controller
+// @Brief: Message-Based Socket Controller
 // ============================================================
 template< unsigned int MaxCount >
 class SocketWindow : public Dialog, public SocketPool< MaxCount >{

@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Initialize COM Imagimg GUIDs (for WinCE)
-// @Author	Blaine
-// @Date	2016/08
+// @Brief: Initialize COM Imagimg GUIDs (for WinCE)
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_COM_DEFGUID_H__
 #define __WIZ_COM_DEFGUID_H__

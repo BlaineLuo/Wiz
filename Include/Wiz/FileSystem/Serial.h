@@ -1,6 +1,6 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2016/08
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_FILESYSTEM_SERIAL_H__
 #define __WIZ_FILESYSTEM_SERIAL_H__

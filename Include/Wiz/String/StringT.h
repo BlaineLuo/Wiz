@@ -1,6 +1,6 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/08
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_STRING_STRINGT_H__
 #define __WIZ_STRING_STRINGT_H__
@@ -14,7 +14,7 @@ namespace Wiz{ namespace String{
 using namespace Wiz::Memory;
 
 // ============================================================
-// @Brief	String Template for ASCII and Unicode.
+// @Brief: String Template for ASCII and Unicode.
 // ============================================================
 template< typename T = TCHAR >
 class StringT : protected Buffer{
@@ -141,7 +141,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Format String of Last Error
+// @Brief: Format String of Last Error
 // ============================================================
 class ErrorString : public StringT<>{
 public:

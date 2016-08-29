@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	System Classes
-// @Author	Blaine
-// @Date	2014/12/23
+// @Brief: System Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_SYSTEM_H__
 #define __WIZ_SYSTEM_H__
@@ -15,7 +15,7 @@ namespace Wiz{ namespace System{
 using namespace Wiz::String;
 
 // ============================================================
-// @Brief	Function Pointer Loader
+// @Brief: Function Pointer Loader
 // ============================================================
 #ifndef LOAD_API
 	#ifdef UNICODE

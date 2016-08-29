@@ -1,14 +1,14 @@
 ﻿// ============================================================
-// @Brief	Windows COM Imaging Classes (for WinCE)
-// @Author	Blaine
-// @Date	2013/09/22
+// @Brief: Windows COM Imaging Classes (for WinCE)
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_COM_IMAGING_H__
 #define __WIZ_COM_IMAGING_H__
 
 #ifdef _WIN32_WCE
 
-#include "Forward.h"
+#include "Wiz/Com/Forward.h"
 #include <Imaging.h>
 
 // ===================================Namespace Head==========================================

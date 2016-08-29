@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Classed Winsock API
-// @Author	Blaine
-// @Date	2016/06
+// @Brief: Classed Winsock API
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_NETWORK_SOCKET_H__
 #define __WIZ_NETWORK_SOCKET_H__

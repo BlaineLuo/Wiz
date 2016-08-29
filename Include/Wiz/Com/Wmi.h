@@ -1,14 +1,13 @@
 ﻿// ============================================================
-// @Brief	Windows COM WMI Classes 
-// @Author	Blaine
-// @Date	2014/03/24
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_COM_WMI_H__
 #define __WIZ_COM_WMI_H__
 
 #ifndef _WIN32_WCE
 
-#include "Forward.h"
+#include "Wiz/Com/Forward.h"
 #include <WbemIdl.h>
 #pragma comment( lib, "WbemUuid.lib" )
 

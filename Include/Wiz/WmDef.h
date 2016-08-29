@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Define Windows User Messages
-// @Author	Blaine
-// @Date	2015/09
+// @Brief: Define Windows User Messages
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_WMDEF_H__
 #define __WIZ_WMDEF_H__

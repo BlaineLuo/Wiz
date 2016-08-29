@@ -1,6 +1,6 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/08
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_STRING_FORWARD_H__
 #define __WIZ_STRING_FORWARD_H__

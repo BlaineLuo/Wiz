@@ -1,6 +1,6 @@
 ﻿// ============================================================
-// @Author	Blaine
-// @Date	2015/03/04
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_WINDOWING_FORWARD_H__
 #define __WIZ_WINDOWING_FORWARD_H__
@@ -180,9 +180,9 @@ public:
 #endif
 
 // ============================================================
-// @Brief	Base Class for the All the
-//			Class that can receive Message.
-//			And MessageMap for The Message Map of Windows.
+// @Brief: Base Class for the All the
+//		Class that can receive Message.
+//		And MessageMap for The Message Map of Windows.
 // ============================================================
 //enum{ MessageMapNull = 0xFFFFFFFF };
 //

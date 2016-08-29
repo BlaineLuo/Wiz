@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Memory Classes
-// @Author	Blaine
-// @Date	2014/12/31
+// @Brief: Memory Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_MEMORY_H__
 #define __WIZ_MEMORY_H__
@@ -112,7 +112,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Buffer Template
+// @Brief: Buffer Template
 // ============================================================
 template< typename T >
 class BufferT : protected Buffer{

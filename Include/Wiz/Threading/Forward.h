@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	Thread Classes 
-// @Author	Blaine
-// @Date	2016/08
+// @Brief: Thread Classes
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_THREADING_FORWARD_H__
 #define __WIZ_THREADING_FORWARD_H__
@@ -31,7 +31,7 @@ namespace Wiz{ namespace Threading{
 using namespace Wiz::Memory;
 
 // ============================================================
-// @Brief	Base Class for Synchronization Objects
+// @Brief: Base Class for Synchronization Objects
 // ============================================================
 class SyncObject : public HandleT< HANDLE, NULL >{
 public:
@@ -48,7 +48,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Event Object ( Inter-Process )
+// @Brief: Event Object ( Inter-Process )
 // ============================================================
 class Event : public SyncObject{
 public:
@@ -68,7 +68,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Mutex Object ( Inter-Process )
+// @Brief: Mutex Object ( Inter-Process )
 // ============================================================
 class Mutex : public SyncObject{
 public:
@@ -88,7 +88,7 @@ public:
 };
 
 // ============================================================
-// @Brief	Semaphore Object ( Inter-Process )
+// @Brief: Semaphore Object ( Inter-Process )
 // ============================================================
 class Semaphore : public SyncObject{
 public:
@@ -109,7 +109,7 @@ public:
 };
 
 // ============================================================
-// @Brief	CriticalSection Object ( non Inter-Process )
+// @Brief: CriticalSection Object ( non Inter-Process )
 // ============================================================
 class CriticalSection : public Structure< CRITICAL_SECTION >{
 public:

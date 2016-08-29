@@ -1,7 +1,7 @@
 ﻿// ============================================================
-// @Brief	GDI and Classes (for Win32)
-// @Author	Blaine
-// @Date	2015/08
+// @Brief: GDI and Classes (for Win32)
+// @Author: Blaine Luo
+// @Date: 2016/08
 // ============================================================
 #ifndef __WIZ_GRAPHING_GDI_H__
 #define __WIZ_GRAPHING_GDI_H__
@@ -117,7 +117,7 @@ public:
 };
 
 // ============================================================
-// @Brief	GDI Object Base
+// @Brief: GDI Object Base
 // ============================================================
 template< typename T = HGDIOBJ >
 class GdiObject : public HandleT< T, NULL >{
@@ -139,7 +139,7 @@ public:
 };
 
 // ============================================================
-// @Brief	GDI Bitmap
+// @Brief: GDI Bitmap
 // ============================================================
 class Bitmap : public GdiObject< HBITMAP >{
 public:
