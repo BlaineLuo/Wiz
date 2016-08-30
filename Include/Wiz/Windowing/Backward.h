@@ -7,6 +7,6 @@
 
 #include "Wiz/Windowing/Panel.h"
 #include "Wiz/Windowing/CommonDialog.h"
-#include "Wiz/Windowing/Control.h"
+#include "Wiz/Windowing/ListView.h"
 
 #endif
