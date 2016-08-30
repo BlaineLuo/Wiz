@@ -20,9 +20,6 @@
 // ============================================================
 namespace Wiz{
 	namespace Windowing{
-		class Target;
-		struct MessageMap;
-		struct MessageEntry;
 		class WindowMap;
 		class Window;
 	}
@@ -178,115 +175,6 @@ public:
 	}
 };
 #endif
-
-// ============================================================
-// @Brief: Base Class for the All the
-//		Class that can receive Message.
-//		And MessageMap for The Message Map of Windows.
-// ============================================================
-//enum{ MessageMapNull = 0xFFFFFFFF };
-//
-//#ifndef DEFINE_MSGMAP
-//	#define DEFINE_MSGMAP() \
-//		virtual MessageMap* getMessageMap();\
-//		static MessageMap _msgMap;\
-//		static MessageEntry _msgEntries[];
-//#endif
-//
-//#ifndef IMPLE_BASE_MSGMAP_BEGIN
-//	#define IMPLE_BASE_MSGMAP_BEGIN( className ) \
-//		MessageMap* className::getMessageMap(){return &className::_msgMap;}\
-//		MessageMap className::_msgMap( NULL, &className::_msgEntries[0] );\
-//		MessageEntry className::_msgEntries[] = {
-//#endif
-//
-//#ifndef IMPLE_MSGMAP_BEGIN
-//	#define IMPLE_MSGMAP_BEGIN( className, baseClassName ) \
-//		MessageMap* className::getMessageMap(){return &className::_msgMap;}\
-//		MessageMap className::_msgMap( &baseClassName::_msgMap, &className::_msgEntries[0] );\
-//		MessageEntry className::_msgEntries[] = {
-//#endif
-//
-//#ifndef IMPLE_MSGMAP_END
-//	#define IMPLE_MSGMAP_END() \
-//		OnMessage( (PtrHandler)NULL, MessageMapNull ) };
-//#endif
-//
-//// Prototype of Method Pointer
-//typedef DWORD(__cdecl Target::*PtrHandler)( ... );
-//
-//class Target : public HandleT< HWND, NULL >{
-//public:
-//	DEFINE_MSGMAP();
-//};
-//
-//struct MessageEntry{
-//	PtrHandler _handler;
-//	UINT _message;
-//	UINT _id;
-//	UINT _code;
-//
-//	template< typename T >
-//	inline MessageEntry( T handler, UINT message, UINT id, UINT code ) :
-//		_handler( (PtrHandler)handler ),
-//		_message( message ),
-//		_id( id ),
-//		_code( code )
-//	{}
-//};
-//
-//struct MessageMap{
-//	MessageMap* _base;
-//	MessageEntry* _entries;
-//
-//	inline MessageMap( MessageMap* base, MessageEntry* entries ) :
-//		_base(base), _entries(entries)
-//	{}
-//
-//	MessageEntry* find( UINT message, UINT id, UINT code ){
-//
-//		for( MessageEntry* entry = _entries ; entry->_message != MessageMapNull ; entry++ ){
-//
-//			if( entry->_message != message )
-//				continue;
-//
-//			if( entry->_id != id && entry->_id != MessageMapNull )
-//				continue;
-//
-//			if( entry->_code != code && entry->_code != MessageMapNull )
-//				continue;
-//
-//			return entry;
-//		}
-//		return NULL;
-//	}
-//};
-
-// ============================================================
-//template< typename T >
-//inline MessageEntry OnMessage( T handler, UINT message, UINT id = MessageMapNull, UINT code = MessageMapNull ){
-//	return MessageEntry( handler, message, id, code );
-//}
-//
-//template< typename T >
-//inline MessageEntry OnCommand( T handler, UINT id, UINT code = MessageMapNull ){
-//	return OnMessage( handler, WM_COMMAND, id, code );
-//}
-//
-//template< typename T >
-//inline MessageEntry OnNotify( T handler, UINT id, UINT code = MessageMapNull ){
-//	return OnMessage( handler, WM_NOTIFY, id, code );
-//}
-//
-//template< typename T >
-//inline MessageEntry OnTimer( T handler, UINT id ){
-//	return OnMessage( handler, WM_TIMER, id );
-//}
-//
-//template< typename T >
-//inline MessageEntry OnSize( T handler, UINT id ){
-//	return OnMessage( handler, WM_SIZE, id );
-//}
 
 // ============================================================
 class WindowMap : public PoolMap< HWND, NULL, Window*, 4096 >{
