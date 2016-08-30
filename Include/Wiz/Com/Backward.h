@@ -5,7 +5,7 @@
 #ifndef __WIZ_COM_BACKWARD_H__
 #define __WIZ_COM_BACKWARD_H__
 
-#include "Imaging.h"
-#include "Wmi.h"
+#include "Wiz/Com/Imaging.h"
+#include "Wiz/Com/Wmi.h"
 
 #endif

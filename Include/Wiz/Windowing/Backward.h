@@ -5,6 +5,8 @@
 #ifndef __WIZ_WINDOWING_BACKWARD_H__
 #define __WIZ_WINDOWING_BACKWARD_H__
 
-#include "Control.h"
+#include "Wiz/Windowing/Panel.h"
+#include "Wiz/Windowing/CommonDialog.h"
+#include "Wiz/Windowing/Control.h"
 
 #endif
