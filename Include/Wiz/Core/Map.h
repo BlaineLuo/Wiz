@@ -2,13 +2,13 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_BASE_MAP_H__
-#define __WIZ_BASE_MAP_H__
+#ifndef __WIZ_CORE_MAP_H__
+#define __WIZ_CORE_MAP_H__
 
-#include "Wiz/Base/Forward.h"
+#include "Wiz/Core/Forward.h"
 
 // ===================================Namespace Head==========================================
-namespace Wiz{ namespace Base{
+namespace Wiz{ namespace Core{
 
 // ============================================================
 template< typename K, typename E >

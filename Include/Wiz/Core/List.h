@@ -2,24 +2,22 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_BASE_LIST_H__
-#define __WIZ_BASE_LIST_H__
+#ifndef __WIZ_CORE_LIST_H__
+#define __WIZ_CORE_LIST_H__
 
-#include "Wiz/Base/Forward.h"
+#include "Wiz/Core/Forward.h"
 
 // ============================================================
 // Forward Declaration
 // ============================================================
-namespace Wiz{
-	namespace Base{
-		template< typename T > class ListNode;
-		template< typename T > class ListIterator;
-		template< typename T > class List;
-	}
-}
+namespace Wiz{ namespace Core{
+	template< typename T > class ListNode;
+	template< typename T > class ListIterator;
+	template< typename T > class List;
+} }
 
 // ===================================Namespace Head==========================================
-namespace Wiz{ namespace Base{
+namespace Wiz{ namespace Core{
 
 // ============================================================
 template< typename T >

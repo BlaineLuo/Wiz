@@ -5,7 +5,7 @@
 #ifndef __WIZ_STRING_FORWARD_H__
 #define __WIZ_STRING_FORWARD_H__
 
-#include "Wiz/Base/Forward.h"
+#include "Wiz/Core/Forward.h"
 #include <TChar.h>
 #include <StrSafe.h>
 #include <StdArg.h>
@@ -13,7 +13,7 @@
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace String{
 
-using namespace Wiz::Base;
+using namespace Wiz::Core;
 
 // ============================================================
 template< typename T >

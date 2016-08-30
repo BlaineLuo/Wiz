@@ -6,7 +6,7 @@
 #ifndef __WIZ_COM_FORWARD_H__
 #define __WIZ_COM_FORWARD_H__
 
-#include "Wiz/Base/Backward.h"
+#include "Wiz/Core/Backward.h"
 #include <ObjBase.h>
 #include <ShlGuid.h>
 #include <ShObjIdl.h>
@@ -14,7 +14,7 @@
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Com{
 
-using namespace Wiz::Base;
+using namespace Wiz::Core;
 
 // ============================================================
 class Startup{

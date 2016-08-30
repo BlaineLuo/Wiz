@@ -6,12 +6,12 @@
 #ifndef __WIZ_MEMORY_H__
 #define __WIZ_MEMORY_H__
 
-#include "Wiz/Base/Backward.h"
+#include "Wiz/Core/Handle.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Memory{
 
-using namespace Wiz::Base;
+using namespace Wiz::Core;
 
 // ============================================================
 class Buffer : public HandleT< HGLOBAL, NULL >{

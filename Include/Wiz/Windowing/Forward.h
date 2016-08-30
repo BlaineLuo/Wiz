@@ -5,6 +5,7 @@
 #ifndef __WIZ_WINDOWING_FORWARD_H__
 #define __WIZ_WINDOWING_FORWARD_H__
 
+#include "Wiz/Core/Backward.h"
 #include "Wiz/Time.h"
 #include "Wiz/WmDef.h"
 #include <WindowsX.h>
@@ -18,16 +19,15 @@
 // ============================================================
 // Forward Declaration
 // ============================================================
-namespace Wiz{
-	namespace Windowing{
-		class WindowMap;
-		class Window;
-	}
-}
+namespace Wiz{ namespace Windowing{
+	class WindowMap;
+	class Window;
+} }
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
 
+using namespace Wiz::Core;
 using namespace Wiz::Time;
 
 // ============================================================

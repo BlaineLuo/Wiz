@@ -6,28 +6,22 @@
 #ifndef __WIZ_THREADING_FORWARD_H__
 #define __WIZ_THREADING_FORWARD_H__
 
+#include "Wiz/Core/Backward.h"
 #include "Wiz/Memory.h"
 
 // ============================================================
 // Forward Declaration
 // ============================================================
-namespace Wiz{
-	namespace Threading{
-		class SyncObject;
-		class Event;
-		class Mutex;
-		class Semaphore;
-		class CriticalSection;
-		class Thread;
-		template< typename T > class SafeListIterator;
-		template< typename T > class SafeList;
-		template< typename K, typename E > class SafeListMap;
-	}
-}
+namespace Wiz{ namespace Threading{
+	template< typename T > class SafeListIterator;
+	template< typename T > class SafeList;
+	template< typename K, typename E > class SafeListMap;
+} }
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Threading{
 
+using namespace Wiz::Core;
 using namespace Wiz::Memory;
 
 // ============================================================

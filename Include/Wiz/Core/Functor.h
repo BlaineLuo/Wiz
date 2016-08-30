@@ -2,11 +2,11 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_BASE_FUNCTOR_H__
-#define __WIZ_BASE_FUNCTOR_H__
+#ifndef __WIZ_CORE_FUNCTOR_H__
+#define __WIZ_CORE_FUNCTOR_H__
 
 // ===================================Namespace Head==========================================
-namespace Wiz{ namespace Base{ namespace Functor{
+namespace Wiz{ namespace Core{ namespace Functor{
 
 template< typename T >
 inline T Add( const T& a, const T& b ){
