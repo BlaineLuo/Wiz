@@ -88,7 +88,7 @@ public:
 		StringT< wchar_t > strMimeType = mimeType;
 		for( UINT i = 0; i < encoderNum; i++ ){
 
-			if( 0 != Compare< wchar_t* >( strMimeType, (wchar_t*)&imageCodecInfo[i].MimeType[0] ) )
+			if( 0 != Compare( strMimeType, imageCodecInfo[i].MimeType ) )
 				continue;
 
 			this->setClassId( imageCodecInfo[i].Clsid );

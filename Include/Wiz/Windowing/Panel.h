@@ -338,7 +338,7 @@ public:
 		_notifyIconData.hIcon = ::LoadIcon( ::GetModuleHandle( NULL ), MAKEINTRESOURCE( iconId ) );
 		_notifyIconData.hWnd = this->getHandle();
 		_notifyIconData.uCallbackMessage = WM_TRAY;
-		Copy( &_notifyIconData.szTip[0], tip );
+		Copy( _notifyIconData.szTip, tip );
 
 		this->onTray( &TrayDialog::onDoubleClick, WM_LBUTTONDBLCLK );
 		this->onTray( &TrayDialog::onDoubleClick, WM_RBUTTONDBLCLK );

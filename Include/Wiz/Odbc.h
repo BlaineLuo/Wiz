@@ -71,7 +71,7 @@ public:
 		if( 0 > idxHead )
 			return false;
 
-		idxHead += GetLength< Character* >( key );
+		idxHead += GetLength( key );
 
 		int idxTail = Search( this->getString(), idxHead, CONST_TEXT( Character*, ";" ) );
 		if( 0 > idxTail || idxHead > idxTail )

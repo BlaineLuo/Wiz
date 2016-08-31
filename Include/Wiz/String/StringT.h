@@ -24,26 +24,26 @@ public:
 	using Buffer::getSize;
 	typedef T Character;
 
-	StringT(){
+	inline StringT(){
 	}
 
-	StringT( char* str ){
+	inline StringT( char* str ){
 		*this = str;
 	}
 
-	StringT( wchar_t* str ){
+	inline StringT( wchar_t* str ){
 		*this = str;
 	}
 
-	operator Character*(){
+	inline operator Character*(){
 		return this->getString();
 	}
 
-	bool operator ==( Character* str ){
+	inline bool operator ==( Character* str ){
 		return( 0 == Compare( *this, str ) );
 	}
 
-	StringT& operator =( StringT& str ){
+	inline StringT& operator =( StringT& str ){
 		return *this = (Character*)str;
 	}
 
@@ -73,70 +73,68 @@ public:
 		return *this;
 	}
 
-	bool createString( unsigned int strLen ){
+	inline bool createString( unsigned int strLen ){
 		Reconstruct( this );
 		return this->createBuffer( sizeof(Character) * ( strLen + 1 ) );
 	}
 
 	StringT& format( Character* format, ... ){
 		Text1024< Character > text;
-		VPRINTF( &text[0], text._maxCount, format );
+		VPRINTF( text, text._maxCount, format );
 		*this = text;
 		return *this;
 	}
 
-	unsigned int getLength(){
-		return GetLength< Character* >( *this );
+	inline unsigned int getLength(){
+		return GetLength( *this );
 	}
 
-	Character* getString(){
+	inline Character* getString(){
 		return (Character*)( this->getHandle() );
 	}
 
-	bool isMultiByte(){
+	inline bool isMultiByte(){
 		return IsChar< Character >::_value;
 	}
 
-	bool isUnicode(){
+	inline bool isUnicode(){
 		return IsWideChar< Character >::_value;
 	}
 
-	Character* toLowerCase(){
-		ToLowerCase< Character* >( *this );
-		return this->getString();
+	inline Character* toLowerCase(){
+		return ToLowerCase( *this );
 	}
 
-	Character* toUpperCase(){
-		ToUpperCase< Character* >( *this );
-		return this->getString();
+	inline Character* toUpperCase(){
+		return ToUpperCase( *this );
 	}
 
-	bool copyFromMultiByte( char* str, UINT codePage = CP_ACP ){
+	bool copyFromMultiByte( char* str, unsigned int codePage = CP_ACP ){
 
-		if( str == NULL || this->isMultiByte() )
+		if( NULL == str || this->isMultiByte() )
 			return false;
 
 		// Get the Unicode String Length with null-terminated.
-		int len = Convert< wchar_t* >( NULL, 0, str, codePage );
+		int len = Convert( NULL, 0, str, codePage );
 		if( len <= 0 )
 			return false;
 
 		this->createString( len );
-		return( 0 < Convert< wchar_t* >( (wchar_t*)this->getString(), len, str, codePage ) );
+		return( 0 < Convert( (wchar_t*)this->getString(), len, str, codePage ) );
 	}
 
-	bool copyFromUnicode( wchar_t* str, UINT codePage = CP_ACP ){
+	bool copyFromUnicode( wchar_t* str, unsigned int codePage = CP_ACP ){
 
-		if( str == NULL || this->isUnicode() )
+		if( NULL == str || this->isUnicode() )
 			return false;
 
 		// Get the MultiByte String Length with null-terminated.
-		int len = Convert< char* >( NULL, 0, str, codePage );
+		int len = Convert( NULL, 0, str, codePage );
 		if( len <= 0 )
 			return false;
 
 		this->createString( len );
-		return( 0 < Convert< char* >( (char*)this->getString(), len, str, codePage ) );
+		return( 0 < Convert( (char*)this->getString(), len, str, codePage ) );
 	}
 };
 

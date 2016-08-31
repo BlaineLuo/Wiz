@@ -16,16 +16,11 @@ namespace Wiz{ namespace String{
 using namespace Wiz::Core;
 
 // ============================================================
-template< typename T >
-inline int Compare( T dst, typename AddConst< T >::Type src, unsigned int len = -1 );
-
-template<>
-inline int Compare( char* dst, typename AddConst< char* >::Type src, unsigned int len ){
+inline int Compare( char* dst, AddConst< char* >::Type src, unsigned int len = -1 ){
 	return ::strncmp( dst, src, len );
 }
 
-template<>
-inline int Compare( wchar_t* dst, typename AddConst< wchar_t* >::Type src, unsigned int len ){
+inline int Compare( wchar_t* dst, AddConst< wchar_t* >::Type src, unsigned int len = -1 ){
 	return ::wcsncmp( dst, src, len );
 }
 
@@ -41,101 +36,61 @@ inline int Search( T str, unsigned int offset, T token ){
 }
 
 // ============================================================
-template< typename T >
-inline T Copy( T dst, typename AddConst< T >::Type src );
-
-template<>
-inline char* Copy( char* dst, typename AddConst< char* >::Type src ){
+inline char* Copy( char* dst, AddConst< char* >::Type src ){
 	::StringCchCopyA( dst, STRSAFE_MAX_CCH, src );
 	return dst;
 }
 
-template<>
-inline wchar_t* Copy( wchar_t* dst, typename AddConst< wchar_t* >::Type src ){
+inline wchar_t* Copy( wchar_t* dst, AddConst< wchar_t* >::Type src ){
 	::StringCchCopyW( dst, STRSAFE_MAX_CCH, src );
 	return dst;
 }
 
 // ============================================================
-template< typename T >
-inline T Copy( T dst, T src, unsigned int len );
-
-template<>
 inline char* Copy( char* dst, char* src, unsigned int len ){
 	::StringCchCopyNA( dst, STRSAFE_MAX_CCH, src, len );
 	return dst;
 }
 
-template<>
 inline wchar_t* Copy( wchar_t* dst, wchar_t* src, unsigned int len ){
 	::StringCchCopyNW( dst, STRSAFE_MAX_CCH, src, len );
 	return dst;
 }
 
 // ============================================================
-template< typename T >
-inline unsigned int GetLength( T str );
-
-template<>
-inline unsigned int GetLength( char* str ){
+inline unsigned int GetLength( const char* str ){
 	return ::strlen( str );
 }
 
-template<>
-inline unsigned int GetLength( const char* str ){
-	return GetLength( (char*)str );
-}
-
-template<>
-inline unsigned int GetLength( wchar_t* str ){
+inline unsigned int GetLength( const wchar_t* str ){
 	return ::wcslen( str );
 }
 
-template<>
-inline unsigned int GetLength( const wchar_t* str ){
-	return GetLength( (wchar_t*)str );
-}
-
 // ============================================================
-template< typename T >
-inline T ToLowerCase( T str );
-
-template<>
 inline char* ToLowerCase( char* str ){
 	return ::CharLowerA( str );
 }
 
-template<>
 inline wchar_t* ToLowerCase( wchar_t* str ){
 	return ::CharLowerW( str );
 }
 
 // ============================================================
-template< typename T >
-inline T ToUpperCase( T str );
-
-template<>
 inline char* ToUpperCase( char* str ){
 	return ::CharUpperA( str );
 }
 
-template<>
 inline wchar_t* ToUpperCase( wchar_t* str ){
 	return ::CharUpperW( str );
 }
 
 // ============================================================
-template< typename T >
-inline T VPrintf( T dst, unsigned int maxLen, typename AddConst< T >::Type format, va_list argList );
-
-template<>
-inline char* VPrintf( char* dst, unsigned int maxLen, typename AddConst< char* >::Type format, va_list argList ){
+inline char* VPrintf( char* dst, unsigned int maxLen, AddConst< char* >::Type format, va_list argList ){
 	::StringCchVPrintfA( dst, maxLen, format, argList );
 	return dst;
 }
 
-template<>
-inline wchar_t* VPrintf( wchar_t* dst, unsigned int maxLen, typename AddConst< wchar_t* >::Type format, va_list argList ){
+inline wchar_t* VPrintf( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, va_list argList ){
 	::StringCchVPrintfW( dst, maxLen, format, argList );
 	return dst;
 }
@@ -150,35 +105,25 @@ inline wchar_t* VPrintf( wchar_t* dst, unsigned int maxLen, typename AddConst< w
 #endif
 
 // ============================================================
-template< typename T >
-inline T Printf( T dst, unsigned int maxLen, typename AddConst< T >::Type format, ... );
-
-template<>
-inline char* Printf( char* dst, unsigned int maxLen, typename AddConst< char* >::Type format, ... ){
+inline char* Printf( char* dst, unsigned int maxLen, AddConst< char* >::Type format, ... ){
 	VPRINTF( dst, maxLen, format );
 	return dst;
 }
 
-template<>
-inline wchar_t* Printf( wchar_t* dst, unsigned int maxLen, typename AddConst< wchar_t* >::Type format, ... ){
+inline wchar_t* Printf( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, ... ){
 	VPRINTF( dst, maxLen, format );
 	return dst;
 }
 
 // ============================================================
-template< typename T >
-inline T PrintfEx( T dst, unsigned int maxLen, typename AddConst< T >::Type format, ... );
-
-template<>
-inline char* PrintfEx( char* dst, unsigned int maxLen, typename AddConst< char* >::Type format, ... ){
+inline char* PrintfEx( char* dst, unsigned int maxLen, AddConst< char* >::Type format, ... ){
 	unsigned int offset = GetLength( dst );
 	Arrange( offset, 0, maxLen );
 	VPRINTF( dst + offset, maxLen - offset, format );
 	return dst;
 }
 
-template<>
-inline wchar_t* PrintfEx( wchar_t* dst, unsigned int maxLen, typename AddConst< wchar_t* >::Type format, ... ){
+inline wchar_t* PrintfEx( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, ... ){
 	unsigned int offset = GetLength( dst );
 	Arrange( offset, 0, maxLen );
 	VPRINTF( dst + offset, maxLen - offset, format );
@@ -186,16 +131,11 @@ inline wchar_t* PrintfEx( wchar_t* dst, unsigned int maxLen, typename AddConst< 
 }
 
 // ============================================================
-template< typename T >
-inline int Convert( T dst, unsigned int maxLen, typename GetInverseType< T >::Type src, unsigned int codePage = CP_ACP );
-
-template<>
-inline int Convert( char* dst, unsigned int maxLen, typename GetInverseType< char* >::Type src, unsigned int codePage ){
+inline int Convert( char* dst, unsigned int maxLen, GetInverseType< char* >::Type src, unsigned int codePage = CP_ACP ){
 	return ::WideCharToMultiByte( codePage, 0, src, -1, dst, maxLen, NULL, NULL );
 }
 
-template<>
-inline int Convert( wchar_t* dst, unsigned int maxLen, typename GetInverseType< wchar_t* >::Type src, unsigned int codePage ){
+inline int Convert( wchar_t* dst, unsigned int maxLen, GetInverseType< wchar_t* >::Type src, unsigned int codePage = CP_ACP ){
 	return ::MultiByteToWideChar( codePage, 0, src, -1, dst, maxLen );
 }
 
@@ -237,9 +177,9 @@ public:
 			return *this;
 
 		if( IsSameType< Entry*, RemoveConst< T* >::Type >::_value )
-			Copy< Entry* >( *this, (Entry*)str );
+			Copy( *this, (Entry*)str );
 		else
-			Convert< Entry* >( *this, _maxCount, (GetInverseType< Entry* >::Type)str );
+			Convert( *this, _maxCount, (GetInverseType< Entry* >::Type)str );
 		return *this;
 	}
 };

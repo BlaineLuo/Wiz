@@ -244,7 +244,7 @@ protected:
 		::Sleep(1); // Delay for receive remaining data.
 
 		Text64<> text;
-		context._socket.getRemoteIp( &text[0], text._maxCount );
+		context._socket.getRemoteIp( text, text._maxCount );
 		this->sendAllTargetString( _T("onClose: Remote Address = %s."), &text );
 
 		//TODO: FD_CLOSE will not signal when Client Socket is not close.

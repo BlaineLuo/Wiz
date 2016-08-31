@@ -21,7 +21,7 @@ struct LvItem : public Structure< LVITEM >{
 
 	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
 		Text1024<> text;
-		VPRINTF( &text[0], text._maxCount, format );
+		VPRINTF( text, text._maxCount, format );
 		this->setRow( idxRow ).setCol( idxCol ).setText( text );
 	}
 
