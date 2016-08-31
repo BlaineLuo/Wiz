@@ -11,6 +11,61 @@
 namespace Wiz{ namespace Windowing{
 
 // ============================================================
+struct LvItem : public Structure< LVITEM >{
+
+	inline LvItem(){}
+
+	inline LvItem( int idxRow, int idxCol = 0 ){
+		this->setRow( idxRow ).setCol( idxCol );
+	}
+
+	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
+		Text1024<> text;
+		VPRINTF( &text[0], text._maxCount, format );
+		this->setRow( idxRow ).setCol( idxCol ).setText( text );
+	}
+
+	inline LvItem( int idxRow, int idxCol, SYSTEMTIME& time ){
+		this->setRow( idxRow ).setCol( idxCol ).setText( SystemTime::CopyTo( time, &Text32<>()[0] ) );
+	}
+
+	inline LvItem& addMask( unsigned int v ){
+		(*this)->mask |= v;
+		return *this;
+	}
+
+	inline LvItem& subMask( unsigned int v ){
+		(*this)->mask &= ~v;
+		return *this;
+	}
+
+	inline LvItem& setRow( int v ){
+		(*this)->iItem = v;
+		return *this;
+	}
+
+	inline LvItem& setCol( int v ){
+		(*this)->iSubItem = v;
+		return *this;
+	}
+
+	inline LvItem& setText( TCHAR* v = NULL ){
+		(*this)->pszText = v;
+		return this->addMask( LVIF_TEXT );
+	}
+
+	inline LvItem& setImage( int v = 0 ){
+		(*this)->iImage = v;
+		return this->addMask( LVIF_IMAGE );
+	}
+
+	inline LvItem& setParam( LPARAM v = 0 ){
+		(*this)->lParam = v;
+		return this->addMask( LVIF_PARAM );
+	}
+};
+
+// ============================================================
 class ListView : public Control{
 
 public:
@@ -92,14 +147,9 @@ public:
 		return true;
 	}
 
-	void addItem( int indexRow ){
-		LVITEM item = {0};
-		//item.mask = LVIF_STATE;
-		//item.state = LVIS_SELECTED | LVIS_FOCUSED;
-		//item.state = LVIS_FOCUSED;
-		//item.stateMask = -1;
-		item.iItem = indexRow;
-		ListView_InsertItem( *this, &item );
+	inline ListView& addItem( int indexRow ){
+		ListView_InsertItem( *this, &LvItem( indexRow ) );
+		return *this;
 	}
 
 	bool deleteColumn( int indexCol ){
@@ -139,12 +189,13 @@ public:
 		return ListView_GetSelectionMark( *this );
 	}
 
-	LPARAM getItemParam( int indexRow ){
-		LVITEM item = {0};
-		item.mask = LVIF_PARAM;
-		item.iItem = indexRow;
+	inline LvItem& getItem( LvItem& item ){
 		ListView_GetItem( *this, &item );
-		return item.lParam;
+		return item;
+	}
+
+	LPARAM getItemParam( int indexRow ){
+		return this->getItem( LvItem( indexRow ).setParam() )->lParam;
 	}
 
 	inline bool getItemRect( int indexRow, int indexCol, Rect& rect ){
@@ -227,45 +278,13 @@ public:
 		return( NULL != ListView_SetImageList( *this, imageList, LVSIL_SMALL ) );
 	}
 
-	void setItemImage( int indexRow, int indexImage ){
-		LVITEM item = {0};
-		item.mask = LVIF_IMAGE;
-		item.iItem = indexRow;
-		item.iImage = indexImage;
+	inline ListView& setItem( LvItem& item ){
 		ListView_SetItem( *this, &item );
-	}
-
-	void setItemParam( int indexRow, LPARAM lParam ){
-		LVITEM item = {0};
-		item.mask = LVIF_PARAM;
-		item.iItem = indexRow;
-		item.lParam = lParam;
-		ListView_SetItem( *this, &item );
+		return *this;
 	}
 
 	inline void setItemState( int indexRow, UINT mask ){
 		ListView_SetItemState( *this, indexRow, mask, mask );
-	}
-
-	void setItemText( int indexRow, int indexCol, PTCHAR string ){
-		LVITEM item = {0};
-		item.mask = LVIF_TEXT;
-		item.iItem = indexRow;
-		item.iSubItem = indexCol;
-		item.pszText = string;
-		ListView_SetItem( *this, &item );
-	}
-
-	inline void setItemTextEx( int indexRow, int indexCol, PTCHAR format, ... ){
-		Text1024<> text;
-		VPRINTF( &text[0], text._maxCount, format );
-		this->setItemText( indexRow, indexCol, text );
-	}
-
-	inline void setItemText( int indexRow, int indexCol, SYSTEMTIME& time ){
-		Text32<> text;
-		SystemTime::CopyTo( time, &text[0] );
-		this->setItemTextEx( indexRow, indexCol, text );
 	}
 
 	inline void setLvStyleEx( DWORD lvStyle ){
