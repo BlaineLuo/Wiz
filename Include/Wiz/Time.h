@@ -113,7 +113,6 @@ public:
 	static inline T* CopyTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
 			string,
-			20,
 			CONST_TEXT( T*, "%04d/%02d/%02d %02d:%02d:%02d" ),
 			time.wYear,
 			time.wMonth,
@@ -127,7 +126,6 @@ public:
 	static inline T* CopyDateTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
 			string,
-			8,
 			CONST_TEXT( T*, "%04d/%02d/%02d" ),
 			time.wYear,
 			time.wMonth,
@@ -138,7 +136,6 @@ public:
 	static inline T* CopyTimeTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
 			string,
-			8,
 			CONST_TEXT( T*, "%02d:%02d:%02d" ),
 			time.wHour,
 			time.wMinute,

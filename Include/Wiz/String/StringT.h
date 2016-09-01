@@ -80,7 +80,7 @@ public:
 
 	StringT& format( Character* format, ... ){
 		Text1024< Character > text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		*this = text;
 		return *this;
 	}

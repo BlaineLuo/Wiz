@@ -15,12 +15,14 @@ namespace Wiz{ namespace String{
 
 using namespace Wiz::Core;
 
+enum{ StringMaxLen = STRSAFE_MAX_CCH };
+
 // ============================================================
-inline int Compare( char* dst, AddConst< char* >::Type src, unsigned int len = -1 ){
+inline int Compare( char* dst, const char* src, unsigned int len = -1 ){
 	return ::strncmp( dst, src, len );
 }
 
-inline int Compare( wchar_t* dst, AddConst< wchar_t* >::Type src, unsigned int len = -1 ){
+inline int Compare( wchar_t* dst, const wchar_t* src, unsigned int len = -1 ){
 	return ::wcsncmp( dst, src, len );
 }
 
@@ -36,24 +38,24 @@ inline int Search( T str, unsigned int offset, T token ){
 }
 
 // ============================================================
-inline char* Copy( char* dst, AddConst< char* >::Type src ){
-	::StringCchCopyA( dst, STRSAFE_MAX_CCH, src );
+inline char* Copy( char* dst, const char* src ){
+	::StringCchCopyA( dst, StringMaxLen, src );
 	return dst;
 }
 
-inline wchar_t* Copy( wchar_t* dst, AddConst< wchar_t* >::Type src ){
-	::StringCchCopyW( dst, STRSAFE_MAX_CCH, src );
+inline wchar_t* Copy( wchar_t* dst, const wchar_t* src ){
+	::StringCchCopyW( dst, StringMaxLen, src );
 	return dst;
 }
 
 // ============================================================
 inline char* Copy( char* dst, char* src, unsigned int len ){
-	::StringCchCopyNA( dst, STRSAFE_MAX_CCH, src, len );
+	::StringCchCopyNA( dst, StringMaxLen, src, len );
 	return dst;
 }
 
 inline wchar_t* Copy( wchar_t* dst, wchar_t* src, unsigned int len ){
-	::StringCchCopyNW( dst, STRSAFE_MAX_CCH, src, len );
+	::StringCchCopyNW( dst, StringMaxLen, src, len );
 	return dst;
 }
 
@@ -85,57 +87,53 @@ inline wchar_t* ToUpperCase( wchar_t* str ){
 }
 
 // ============================================================
-inline char* VPrintf( char* dst, unsigned int maxLen, AddConst< char* >::Type format, va_list argList ){
-	::StringCchVPrintfA( dst, maxLen, format, argList );
+inline char* VPrintf( char* dst, const char* format, va_list argList ){
+	::StringCchVPrintfA( dst, StringMaxLen, format, argList );
 	return dst;
 }
 
-inline wchar_t* VPrintf( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, va_list argList ){
-	::StringCchVPrintfW( dst, maxLen, format, argList );
+inline wchar_t* VPrintf( wchar_t* dst, const wchar_t* format, va_list argList ){
+	::StringCchVPrintfW( dst, StringMaxLen, format, argList );
 	return dst;
 }
 
 // ============================================================
 #ifndef VPRINTF
-#define VPRINTF( dst, maxLen, format ) \
+#define VPRINTF( dst, format ) \
 	va_list	args;\
 	va_start( args, format );\
-	VPrintf( dst, maxLen, format, args );\
+	VPrintf( dst, format, args );\
 	va_end( args );
 #endif
 
 // ============================================================
-inline char* Printf( char* dst, unsigned int maxLen, AddConst< char* >::Type format, ... ){
-	VPRINTF( dst, maxLen, format );
+inline char* Printf( char* dst, const char* format, ... ){
+	VPRINTF( dst, format );
 	return dst;
 }
 
-inline wchar_t* Printf( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, ... ){
-	VPRINTF( dst, maxLen, format );
-	return dst;
-}
-
-// ============================================================
-inline char* PrintfEx( char* dst, unsigned int maxLen, AddConst< char* >::Type format, ... ){
-	unsigned int offset = GetLength( dst );
-	Arrange( offset, 0, maxLen );
-	VPRINTF( dst + offset, maxLen - offset, format );
-	return dst;
-}
-
-inline wchar_t* PrintfEx( wchar_t* dst, unsigned int maxLen, AddConst< wchar_t* >::Type format, ... ){
-	unsigned int offset = GetLength( dst );
-	Arrange( offset, 0, maxLen );
-	VPRINTF( dst + offset, maxLen - offset, format );
+inline wchar_t* Printf( wchar_t* dst, const wchar_t* format, ... ){
+	VPRINTF( dst, format );
 	return dst;
 }
 
 // ============================================================
-inline int Convert( char* dst, unsigned int maxLen, GetInverseType< char* >::Type src, unsigned int codePage = CP_ACP ){
+inline char* PrintfEx( char* dst, const char* format, ... ){
+	VPRINTF( dst + GetLength( dst ), format );
+	return dst;
+}
+
+inline wchar_t* PrintfEx( wchar_t* dst, const wchar_t* format, ... ){
+	VPRINTF( dst + GetLength( dst ), format );
+	return dst;
+}
+
+// ============================================================
+inline int Convert( char* dst, unsigned int maxLen, wchar_t* src, unsigned int codePage = CP_ACP ){
 	return ::WideCharToMultiByte( codePage, 0, src, -1, dst, maxLen, NULL, NULL );
 }
 
-inline int Convert( wchar_t* dst, unsigned int maxLen, GetInverseType< wchar_t* >::Type src, unsigned int codePage = CP_ACP ){
+inline int Convert( wchar_t* dst, unsigned int maxLen, char* src, unsigned int codePage = CP_ACP ){
 	return ::MultiByteToWideChar( codePage, 0, src, -1, dst, maxLen );
 }
 

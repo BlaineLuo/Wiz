@@ -388,7 +388,7 @@ public:
 
 	inline bool setTextEx( PTCHAR format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		return this->setText( text );
 	}
 
@@ -484,7 +484,7 @@ public:
 
 	inline int showMessage( UINT type, PTCHAR format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		return ::MessageBox( *this, text, _T("Notice"), type | MB_TOPMOST | MB_APPLMODAL | MB_ICONINFORMATION );
 		//return MessageBox( *this, text, _T("Notice"), MB_OKCANCEL | MB_TOPMOST | MB_APPLMODAL | MB_ICONQUESTION );
 	}
@@ -525,13 +525,13 @@ public:
 
 	inline void sendAllTargetString( PTCHAR format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		this->sendAllTarget( WM_STRING, (WPARAM)&text );
 	}
 
 	inline void sendAllTargetString( UINT tag, PTCHAR format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		this->sendAllTarget( WM_STRING, (WPARAM)&text, tag );
 	}
 

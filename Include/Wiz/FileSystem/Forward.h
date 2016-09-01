@@ -334,7 +334,7 @@ public:
 
 	inline bool setValue( const TCHAR* key, TCHAR* format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		return( 0 != ::WritePrivateProfileString( _section, key, text, _fileName ) );
 	}
 };
@@ -357,7 +357,7 @@ public:
 
 	inline void putStringEx( TCHAR* format, ... ){
 		Text1024<> text;
-		VPRINTF( text, text._maxCount, format );
+		VPRINTF( text, format );
 		this->putString( text );
 	}
 

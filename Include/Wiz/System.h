@@ -71,20 +71,15 @@ static DWORD GetRandom(){
 }
 
 // ============================================================
-template< typename T >
-inline void ShowMessage( T format, ... );
-
-template<>
 inline void ShowMessage( const char* format, ... ){
 	Text1024< char > text;
-	VPRINTF( text, text._maxCount, format );
+	VPRINTF( text, format );
 	::MessageBoxA( NULL, text, "Message", MB_OK | MB_TOPMOST );
 }
 
-template<>
 inline void ShowMessage( const wchar_t* format, ... ){
 	Text1024< wchar_t > text;
-	VPRINTF( text, text._maxCount, format );
+	VPRINTF( text, format );
 	::MessageBoxW( NULL, text, L"Message", MB_OK | MB_TOPMOST );
 }
 
