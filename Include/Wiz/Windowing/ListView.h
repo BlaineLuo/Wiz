@@ -9,54 +9,100 @@
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
+;
+// ============================================================
+template< typename T, typename E >
+struct LvElem : public Structure< E >{
+
+protected:
+	inline T& addMask( unsigned int v ){
+		(*this)->mask |= v;
+		return *(T*)this;
+	}
+
+	inline T& subMask( unsigned int v ){
+		(*this)->mask &= ~v;
+		return *(T*)this;
+	}
+
+	inline T& addRow( int v ){
+		(*this)->iItem = v;
+		return *(T*)this;
+	}
+
+	inline T& addCol( int v ){
+		(*this)->iSubItem = v;
+		return *(T*)this;
+	}
+
+	inline T& addText( TCHAR* v ){
+		(*this)->pszText = v;
+		return *(T*)this;
+	}
+
+	inline T& addImage( int v ){
+		(*this)->iImage = v;
+		return *(T*)this;
+	}
+};
 
 // ============================================================
-struct LvItem : public Structure< LVITEM >{
+struct LvColumn : public LvElem< LvColumn, LVCOLUMN >{
+
+	inline LvColumn(){}
+
+	inline LvColumn( int idxCol ){
+		this->setCol( idxCol );
+	}
+
+	inline LvColumn( int idxCol, TCHAR* text, int witdh, int format = LVCFMT_LEFT ){
+		this->setCol( idxCol ).setText( text ).setWidth( witdh ).setFormat( format );
+	}
+
+	inline LvColumn& setCol( int v = 0 ){
+		return this->addCol( v ).addMask( LVCF_SUBITEM );
+	}
+
+	inline LvColumn& setText( TCHAR* v = NULL ){
+		return this->addText( v ).addMask( LVCF_TEXT );
+	}
+
+	inline LvColumn& setWidth( int v = 0 ){
+		(*this)->cx = v;
+		return this->addMask( LVCF_WIDTH );
+	}
+
+	inline LvColumn& setFormat( int v = 0 ){
+		(*this)->fmt = v;
+		return this->addMask( LVCF_FMT );
+	}
+};
+
+// ============================================================
+struct LvItem : public LvElem< LvItem, LVITEM >{
 
 	inline LvItem(){}
 
 	inline LvItem( int idxRow, int idxCol = 0 ){
-		this->setRow( idxRow ).setCol( idxCol );
+		this->addRow( idxRow ).addCol( idxCol );
 	}
 
 	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
 		Text1024<> text;
 		VPRINTF( text, format );
-		this->setRow( idxRow ).setCol( idxCol ).setText( text );
+		this->addRow( idxRow ).addCol( idxCol ).setText( text );
 	}
 
 	inline LvItem( int idxRow, int idxCol, SYSTEMTIME& time ){
-		this->setRow( idxRow ).setCol( idxCol ).setText( SystemTime::CopyTo( time, &Text32<>()[0] ) );
-	}
-
-	inline LvItem& addMask( unsigned int v ){
-		(*this)->mask |= v;
-		return *this;
-	}
-
-	inline LvItem& subMask( unsigned int v ){
-		(*this)->mask &= ~v;
-		return *this;
-	}
-
-	inline LvItem& setRow( int v ){
-		(*this)->iItem = v;
-		return *this;
-	}
-
-	inline LvItem& setCol( int v ){
-		(*this)->iSubItem = v;
-		return *this;
+		this->addRow( idxRow ).addCol( idxCol ).setText( SystemTime::CopyTo( time, &Text1024<>()[0] ) );
 	}
 
 	inline LvItem& setText( TCHAR* v = NULL ){
-		(*this)->pszText = v;
-		return this->addMask( LVIF_TEXT );
+		return this->addText( v ).addMask( LVIF_TEXT );
 	}
 
 	inline LvItem& setImage( int v = 0 ){
-		(*this)->iImage = v;
-		return this->addMask( LVIF_IMAGE );
+		return this->addImage( v ).addMask( LVIF_IMAGE );
 	}
 
 	inline LvItem& setParam( LPARAM v = 0 ){
@@ -132,13 +178,8 @@ public:
 	}
 
 	bool addColumn( int indexCol, PTCHAR name, int width = 100, int format = LVCFMT_LEFT ){
-		LVCOLUMN lvColumn = {0};
-		lvColumn.mask = LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH | LVCF_FMT;
-		lvColumn.iSubItem = indexCol;
-		lvColumn.pszText = name;
-		lvColumn.cx = width;
-		lvColumn.fmt = format;
-		if( -1 == ListView_InsertColumn( *this, indexCol, &lvColumn ) )
+
+		if( -1 == ListView_InsertColumn( *this, indexCol, &LvColumn( indexCol, name, width, format ) ) )
 			return false;
 
 		Column column;
@@ -250,13 +291,8 @@ public:
 		return( 0 != ListView_Scroll( *this, 0, ( rect->bottom - rect->top ) * indexRow ) );
 	}
 
-	bool setColumn( int indexCol, PTCHAR name, int width = 100 ){
-		LVCOLUMN lvColumn = {0};
-		lvColumn.mask = LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
-		lvColumn.iSubItem = indexCol;
-		lvColumn.pszText = name;
-		lvColumn.cx = width;
-		return( 0 != ListView_SetColumn( *this, indexCol, &lvColumn ) );
+	inline bool setColumn( LvColumn& column ){
+		return( 0 != ListView_SetColumn( *this, column->iSubItem, &column ) );
 	}
 
 	bool setColumnColor( int indexCol, COLORREF colorText, COLORREF colorTextBk ){
