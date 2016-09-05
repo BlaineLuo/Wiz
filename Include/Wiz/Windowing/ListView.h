@@ -88,13 +88,16 @@ struct LvItem : public LvElem< LvItem, LVITEM >{
 	}
 
 	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
-		Text1024<> text;
+		static Text1024<> text;
+		text.clear();
 		VPRINTF( text, format );
 		this->addRow( idxRow ).addCol( idxCol ).setText( text );
 	}
 
 	inline LvItem( int idxRow, int idxCol, SYSTEMTIME& time ){
-		this->addRow( idxRow ).addCol( idxCol ).setText( SystemTime::CopyTo( time, &Text1024<>()[0] ) );
+		static Text32<> text;
+		text.clear();
+		this->addRow( idxRow ).addCol( idxCol ).setText( SystemTime::CopyTo( time, &text[0] ) );
 	}
 
 	inline LvItem& setText( TCHAR* v = NULL ){
