@@ -56,7 +56,7 @@ public:
 		this->setTranslationNum( 0 );
 	}
 
-	bool create( PTCHAR fileName ){
+	bool create( TCHAR* fileName ){
 
 		Reconstruct( this );
 
@@ -103,7 +103,7 @@ public:
 		_translationNum = number;
 	}
 
-	PTCHAR getFileInfoString( PTCHAR subBlock, UINT translationIndex = 0 ){
+	TCHAR* getFileInfoString( const TCHAR* subBlock, UINT translationIndex = 0 ){
 
 		Translation* translation = this->getTranslation( translationIndex );
 		if( NULL == translation )
@@ -117,7 +117,7 @@ public:
 			subBlock
 		);
 
-		PTCHAR string = NULL;
+		TCHAR* string = NULL;
 		::VerQueryValue( *this, strSubBlock, (LPVOID*)&string, NULL );
 		return string;
 	}
@@ -134,7 +134,7 @@ public:
 	StringT<> _path;
 	VersionInfo _versionInfo;
 
-	bool create( PTCHAR name ){
+	bool create( TCHAR* name ){
 		MaxPath<> instancePath;
 		::GetModuleFileName( NULL, instancePath, instancePath._maxCount );
 
@@ -153,7 +153,7 @@ public:
 			::FindClose( *this );
 	}
 
-	bool findFile( PTCHAR searchExpression, WIN32_FIND_DATA& winFindData ){
+	bool findFile( TCHAR* searchExpression, WIN32_FIND_DATA& winFindData ){
 
 		if( !this->isCreated() )
 			return this->findFirstFile( searchExpression, winFindData );
@@ -165,7 +165,7 @@ public:
 		return true;
 	}
 
-	bool findFirstFile( PTCHAR searchExpression, WIN32_FIND_DATA& winFindData ){
+	bool findFirstFile( TCHAR* searchExpression, WIN32_FIND_DATA& winFindData ){
 
 		if( NULL == searchExpression )
 			return false;
@@ -212,7 +212,7 @@ public:
 	}
 
 	bool create(
-		PTCHAR fileName,
+		TCHAR* fileName,
 		DWORD shareMode = 0,
 		DWORD creationDisposition = OPEN_ALWAYS,
 		DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL

@@ -230,6 +230,12 @@ inline void Reconstruct( T* p ){
 }
 
 // ============================================================
+template< typename T, typename U >
+inline int MemoryCompare( T& t, U& u, unsigned char byte = sizeof(T) ){
+	return ::memcmp( &t, &u, byte );
+}
+
+// ============================================================
 template< typename T >
 inline void MemoryReset( T& entry, unsigned char byte = 0 ){
 	::FillMemory( &entry, sizeof(entry), byte );
