@@ -262,8 +262,7 @@ public:
 		return( SOCKET_ERROR != ::getpeername( *this, sockAddr, &size ) );
 	}
 
-	template< typename T >
-	bool getLocalIp( T ip, unsigned int len ){
+	bool getLocalIp( TCHAR* ip, unsigned int len ){
 		SockAddr sockAddr;
 		if( !this->getLocalAddr( sockAddr ) )
 			return false;
@@ -272,8 +271,7 @@ public:
 		return true;
 	}
 
-	template< typename T >
-	bool getRemoteIp( T ip, unsigned int len ){
+	bool getRemoteIp( TCHAR* ip, unsigned int len ){
 		SockAddr sockAddr;
 		if( !this->getRemoteAddr( sockAddr ) )
 			return false;
