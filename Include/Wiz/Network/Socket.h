@@ -257,27 +257,21 @@ public:
 		return( SOCKET_ERROR != ::getsockname( *this, sockAddr, &size ) );
 	}
 
+	inline SockAddr getLocalAddr(){
+		SockAddr sockAddr;
+		this->getLocalAddr( sockAddr );
+		return sockAddr;
+	}
+
 	inline bool getRemoteAddr( SockAddr& sockAddr ){
 		int size = sizeof(sockAddr);
 		return( SOCKET_ERROR != ::getpeername( *this, sockAddr, &size ) );
 	}
 
-	bool getLocalIp( TCHAR* ip, unsigned int len ){
+	inline SockAddr getRemoteAddr(){
 		SockAddr sockAddr;
-		if( !this->getLocalAddr( sockAddr ) )
-			return false;
-		if( !sockAddr.getHost( ip, len ) )
-			return false;
-		return true;
-	}
-
-	bool getRemoteIp( TCHAR* ip, unsigned int len ){
-		SockAddr sockAddr;
-		if( !this->getRemoteAddr( sockAddr ) )
-			return false;
-		if( !sockAddr.getHost( ip, len ) )
-			return false;
-		return true;
+		this->getRemoteAddr( sockAddr );
+		return sockAddr;
 	}
 
 	inline bool setNonBlockingMode( bool enable ){
@@ -388,13 +382,11 @@ public:
 	typedef Socket Parent;
 
 	inline SockAddr& getLocalAddr(){
-		this->Parent::getLocalAddr( _addrLocal );
-		return _addrLocal;
+		return _addrLocal = this->Parent::getLocalAddr();
 	}
 
 	inline SockAddr& getRemoteAddr(){
-		this->Parent::getRemoteAddr( _addrRemote );
-		return _addrRemote;
+		return _addrRemote = this->Parent::getRemoteAddr();
 	}
 
 	inline SocketEx& setLocalAddr( SockAddr& sockAddr ){
