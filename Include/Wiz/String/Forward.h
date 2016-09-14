@@ -167,14 +167,14 @@ template< typename T, unsigned int MaxCount >
 class StringArray : public Array< T, MaxCount >{
 
 public:
-	template< typename T >
-	StringArray& operator <<( T* str ){
+	template< typename S >
+	StringArray& operator <<( S* str ){
 		this->clear();
 
 		if( NULL == str || _maxCount <= GetLength( str ) )
 			return *this;
 
-		if( IsSameType< Entry*, RemoveConst< T* >::Type >::_value )
+		if( IsSameType< Entry*, RemoveConst< S* >::Type >::_value )
 			Copy( *this, (Entry*)str );
 		else
 			Convert( *this, _maxCount, (GetInverseType< Entry* >::Type)str );
