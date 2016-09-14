@@ -279,10 +279,18 @@ public:
 		return true;
 	}
 
-	bool pushTask( unsigned int id ){
+	template< typename Data >
+	bool pushTask( unsigned int id, Data& data ){
+		int len = sizeof(data);
 		IoTask ioTask = {0};
 		ioTask._id = id;
 		ioTask._ioType = IoType_Task;
+		if( 0 < len ){
+			Buffer& buffer = this->getBuffer();
+			buffer.copyFrom( &data, len );
+			ioTask._data = buffer.getHandle();
+			ioTask._len = len;
+		}
 		return _recvTaskQueue.push( ioTask );
 	}
 

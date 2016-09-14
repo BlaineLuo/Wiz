@@ -212,6 +212,25 @@ struct GetInverseType< wchar_t* >{
 
 // ============================================================
 template< typename T >
+struct GetDoubledType;
+
+template<>
+struct GetDoubledType< unsigned char >{
+	typedef unsigned short Type;
+};
+
+template<>
+struct GetDoubledType< unsigned short >{
+	typedef unsigned int Type;
+};
+
+template<>
+struct GetDoubledType< unsigned int >{
+	typedef unsigned __int64 Type;
+};
+
+// ============================================================
+template< typename T >
 inline void Construct( T* p ){
 	::new( p ) T();
 }
@@ -248,6 +267,12 @@ inline void Arrange( Var& var, Min min, Max max ){
 		var = (Var)min;
 	if( var > (Var)max )
 		var = (Var)max;
+}
+
+// ============================================================
+template< typename T >
+static inline typename GetDoubledType< T >::Type LeftShiftOr( T a, T b ){
+	return ( (GetDoubledType< T >::Type)a << ( sizeof(T) * 8 ) ) | b;
 }
 
 // ============================================================
@@ -308,6 +333,9 @@ struct StaticContainer{
 	enum{ _totalSize = _entrySize * _maxCount };
 	typedef StaticIndexer< _maxCount > Indexer;
 };
+
+// ============================================================
+typedef StaticContainer< int, 0 > StructureEmpty;
 
 // ============================================================
 template< typename T >
