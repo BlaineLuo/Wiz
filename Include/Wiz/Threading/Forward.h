@@ -348,11 +348,11 @@ public:
 	typedef	MapNode< Key, Entry > Node;
 
 	Node* findNodeAt( int index ){
-		return List::findEntryAt( index );
+		return this->List::findEntryAt( index );
 	}
 
 	Entry* findEntryAt( int index ){
-		Node* node = List::findEntryAt( index );
+		Node* node = this->List::findEntryAt( index );
 		return node ? &node->_entry : NULL;
 	}
 

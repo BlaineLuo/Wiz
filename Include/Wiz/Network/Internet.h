@@ -27,7 +27,7 @@ public:
 // ============================================================
 class Internet : public Handle{
 public:
-	inline bool openInternet(
+	inline bool open(
 		PTCHAR agent,
 		DWORD accessType = INTERNET_OPEN_TYPE_DIRECT,
 		PTCHAR proxyName = NULL,
@@ -63,7 +63,7 @@ protected:
 	}
 
 public:
-	inline bool openConnectionFtp(
+	inline bool openFtp(
 		Internet& internet,
 		PTCHAR server,
 		WORD port,
@@ -76,11 +76,12 @@ public:
 			port,
 			username,
 			password,
-			INTERNET_SERVICE_FTP, FTP_TRANSFER_TYPE_BINARY
+			INTERNET_SERVICE_FTP,
+			FTP_TRANSFER_TYPE_BINARY
 		);
 	}
 
-	inline bool openConnectionHttp( Internet& internet, PTCHAR server, WORD port ){
+	inline bool openHttp( Internet& internet, PTCHAR server, WORD port ){
 	   return this->openConnection( internet, server, port, NULL, NULL, INTERNET_SERVICE_HTTP, 0 );
 	}
 
@@ -159,23 +160,9 @@ public:
 };
 
 // ============================================================
-template< typename T >
-inline bool SendRequest( Connection& connection, T headers, T optional );
-
-template<>
-inline bool SendRequest( Connection& connection, char* headers, char* optional ){
-	return( 0 != ::HttpSendRequestA( connection, headers, GetLength( headers ), optional, GetLength( optional ) ) );
-}
-
-template<>
-inline bool SendRequest( Connection& connection, wchar_t* headers, wchar_t* optional ){
-	return( 0 != ::HttpSendRequestW( connection, headers, GetLength( headers ), optional, GetLength( optional ) ) );
-}
-
-// ============================================================
 class Http : public Handle{
 public:
-	bool openRequest(
+	bool open(
 		Connection& connection,
 		PTCHAR objectName,
 		PTCHAR verb = _T("GET"),
@@ -192,15 +179,24 @@ public:
 		return this->isCreated();
 	}
 
-	inline bool readFile( void* outBuffer, DWORD outBufferSize, DWORD* outDataLen ){
-		return( 0 != ::InternetReadFile( *this, outBuffer, outBufferSize, outDataLen ) );
-	}
-
-	template< typename T >
-	inline bool sendRequest( T headers = NULL, T optional = NULL ){
+	template< typename T, typename U >
+	inline bool send( T headers = NULL, U optional = NULL ){
 		return SendRequest( *this, headers, optional );
 	}
+
+	inline bool recv( void* outBuffer, DWORD outBufferSize, DWORD* outDataLen ){
+		return( 0 != ::InternetReadFile( *this, outBuffer, outBufferSize, outDataLen ) );
+	}
 };
+
+// ============================================================
+inline bool SendRequest( Http& http, const char* headers, const char* optional ){
+	return( 0 != ::HttpSendRequestA( http, headers, GetLength( headers ), (void*)optional, GetLength( optional ) ) );
+}
+
+inline bool SendRequest( Http& http, const wchar_t* headers, const wchar_t* optional ){
+	return( 0 != ::HttpSendRequestW( http, headers, GetLength( headers ), (void*)optional, GetLength( optional ) ) );
+}
 
 }}}
 // ===================================Namespace Tail==========================================

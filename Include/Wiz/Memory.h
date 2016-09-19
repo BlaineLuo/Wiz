@@ -126,7 +126,7 @@ public:
 	}
 
 	inline Entry* getHandle(){
-		return (Entry*)Buffer::getHandle();
+		return (Entry*)this->Buffer::getHandle();
 	}
 };
 
