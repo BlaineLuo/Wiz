@@ -123,7 +123,7 @@ public:
 	Entry* peek( unsigned int pipeId ){
 
 		if( !this->checkPipe( pipeId ) )
-			return false;
+			return NULL;
 
 		return &(*this)[ _pipeSet[ pipeId ] ];
 	}

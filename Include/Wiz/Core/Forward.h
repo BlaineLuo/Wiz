@@ -231,6 +231,25 @@ struct GetDoubledType< unsigned int >{
 
 // ============================================================
 template< typename T >
+struct GetHalvedType;
+
+template<>
+struct GetHalvedType< unsigned short >{
+	typedef unsigned char Type;
+};
+
+template<>
+struct GetHalvedType< unsigned int >{
+	typedef unsigned short Type;
+};
+
+template<>
+struct GetHalvedType< unsigned __int64 >{
+	typedef unsigned int Type;
+};
+
+// ============================================================
+template< typename T >
 inline void Construct( T* p ){
 	::new( p ) T();
 }
@@ -262,17 +281,39 @@ inline void MemoryReset( T& entry, unsigned char byte = 0 ){
 
 // ============================================================
 template< typename Var, typename Min, typename Max >
-inline void Arrange( Var& var, Min min, Max max ){
+inline Var& Arrange( Var& var, Min min, Max max ){
 	if( var < (Var)min )
 		var = (Var)min;
 	if( var > (Var)max )
 		var = (Var)max;
+	return var;
+}
+
+// ============================================================
+template< typename Var, typename Max >
+inline Var& Arrange( Var& var, Max max ){
+	if( var >= 0 )
+		return Arrange( var, 0, max );
+	else
+		return Arrange( var, max, 0 );
 }
 
 // ============================================================
 template< typename T >
 static inline typename GetDoubledType< T >::Type LeftShiftOr( T a, T b ){
 	return ( (GetDoubledType< T >::Type)a << ( sizeof(T) * 8 ) ) | b;
+}
+
+// ============================================================
+template< typename T >
+static inline typename GetHalvedType< T >::Type GetHighPart( T v ){
+	return ( (GetHalvedType< T >::Type)( v >> ( sizeof(T) * 4 ) ) );
+}
+
+// ============================================================
+template< typename T >
+static inline typename GetHalvedType< T >::Type GetLowPart( T v ){
+	return (GetHalvedType< T >::Type)v;
 }
 
 // ============================================================

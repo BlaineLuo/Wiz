@@ -16,6 +16,23 @@ namespace Wiz{ namespace Network{ namespace Internet{
 using namespace Wiz::String;
 
 // ============================================================
+template< typename T >
+struct InternetParam{
+	DWORD _flags;
+	DWORD_PTR _context;
+
+	inline T& setFlags( DWORD v ){
+		_flags = v;
+		return (T&)*this;
+	}
+
+	inline T& setContext( DWORD_PTR v ){
+		_context = v;
+		return (T&)*this;
+	}
+};
+
+// ============================================================
 class Handle : public HandleT< HINTERNET, NULL >{
 public:
 	inline ~Handle(){
@@ -28,10 +45,10 @@ public:
 class Internet : public Handle{
 public:
 	inline bool open(
-		PTCHAR agent,
+		TCHAR* agent,
 		DWORD accessType = INTERNET_OPEN_TYPE_DIRECT,
-		PTCHAR proxyName = NULL,
-		PTCHAR proxyBypass = NULL,
+		TCHAR* proxyName = NULL,
+		TCHAR* proxyBypass = NULL,
 		DWORD flags = 0
 	){
 		Reconstruct( this );
@@ -41,88 +58,154 @@ public:
 };
 
 // ============================================================
-class Connection : public Handle{
+struct ConnectionParam : InternetParam< ConnectionParam >{
+	TCHAR* _server;
+	DWORD _port;
+	TCHAR* _username;
+	TCHAR* _password;
+	DWORD _service;
 
-protected:
-	inline bool openConnection(
-		Internet& internet,
-		PTCHAR server,
-		WORD port,
-		PTCHAR username,
-		PTCHAR password,
-		DWORD service,
-		DWORD flags,
-		DWORD_PTR context = 0
-	){
+	inline ConnectionParam(){
+		MemoryReset( *this );
+	}
+
+	inline ConnectionParam& buildFtp( TCHAR* server, WORD port, TCHAR* username, TCHAR* password ){
+		this->setServer( server ).
+			setPort( port ).
+			setService( INTERNET_SERVICE_FTP ).
+			setUsername( username ).
+			setPassword( password );
+		return *this;
+	}
+
+	inline ConnectionParam& buildHttp( TCHAR* server, WORD port ){
+		this->setServer( server ).setPort( port ).setService( INTERNET_SERVICE_HTTP );
+		return *this;
+	}
+
+	inline ConnectionParam& setServer( TCHAR* v ){
+		_server = v;
+		return *this;
+	}
+
+	inline ConnectionParam& setPort( WORD v ){
+		_port = v;
+		return *this;
+	}
+
+	inline ConnectionParam& setUsername( TCHAR* v ){
+		_username = v;
+		return *this;
+	}
+
+	inline ConnectionParam& setPassword( TCHAR* v ){
+		_password = v;
+		return *this;
+	}
+
+	inline ConnectionParam& setService( DWORD v ){
+		_service = v;
+		return *this;
+	}
+};
+
+// ============================================================
+class Connection : public Handle{
+public:
+	inline bool open( Internet& internet, ConnectionParam& param ){
 		Reconstruct( this );
 		if( !internet.isCreated() )
 			return false;
 
-		this->setHandle( ::InternetConnect( internet, server, port, username, password, service, flags, context ) );
+		this->setHandle( ::InternetConnect(
+			internet,
+			param._server,
+			param._port,
+			param._username,
+			param._password,
+			param._service,
+			param._flags,
+			param._context
+		) );
 		return this->isCreated();
 	}
 
-public:
-	inline bool openFtp(
-		Internet& internet,
-		PTCHAR server,
-		WORD port,
-		PTCHAR username,
-		PTCHAR password
-	){
-		return this->openConnection(
-			internet,
-			server,
-			port,
-			username,
-			password,
-			INTERNET_SERVICE_FTP,
-			FTP_TRANSFER_TYPE_BINARY
-		);
-	}
-
-	inline bool openHttp( Internet& internet, PTCHAR server, WORD port ){
-	   return this->openConnection( internet, server, port, NULL, NULL, INTERNET_SERVICE_HTTP, 0 );
-	}
-
-	inline bool ftpSetCurrentDirectory( PTCHAR directory ){
+	inline bool ftpSetCurrentDirectory( TCHAR* directory ){
 		return( 0 != ::FtpSetCurrentDirectory( *this, directory ) );
+	}
+};
+
+// ============================================================
+struct FtpFindParam : InternetParam< FtpFindParam >{
+	WIN32_FIND_DATA _foundData;
+	TCHAR* _filter;
+
+	inline FtpFindParam( TCHAR* filter, DWORD flags = FTP_TRANSFER_TYPE_BINARY ){
+		MemoryReset( *this );
+		this->setFilter( filter ).setFlags( flags );
+	}
+
+	inline FtpFindParam& setFilter( TCHAR* v ){
+		_filter = v;
+		return *this;
+	}
+};
+
+// ============================================================
+struct FtpTransferParam : InternetParam< FtpTransferParam >{
+	TCHAR* _remoteFile;
+	TCHAR* _localFile;
+	BOOL _isFailIfExists;
+	DWORD _fileAttributes;
+
+	inline FtpTransferParam(
+		TCHAR* remoteFile,
+		TCHAR* localFile,
+		DWORD flags = FTP_TRANSFER_TYPE_BINARY | INTERNET_FLAG_RELOAD
+	){
+		MemoryReset( *this );
+		this->setRemoteFile( remoteFile ).
+			setLocalFile( localFile ).
+			setIsFailIfExists( false ).
+			setFileAttributes( FILE_ATTRIBUTE_NORMAL ).
+			setFlags( flags );
+	}
+
+	inline FtpTransferParam& setRemoteFile( TCHAR* v ){
+		_remoteFile = v;
+		return *this;
+	}
+
+	inline FtpTransferParam& setLocalFile( TCHAR* v ){
+		_localFile = v;
+		return *this;
+	}
+
+	inline FtpTransferParam& setIsFailIfExists( BOOL v ){
+		_isFailIfExists = v;
+		return *this;
+	}
+
+	inline FtpTransferParam& setFileAttributes( DWORD v ){
+		_fileAttributes = v;
+		return *this;
 	}
 };
 
 // ============================================================
 class Ftp : public Handle{
 
-public:
-	bool findFile(
-		Connection& connection,
-		PTCHAR searchExpression,
-		WIN32_FIND_DATA& winFindData,
-		DWORD flags = FTP_TRANSFER_TYPE_BINARY,
-		DWORD_PTR context = NULL
-	){
-		if( !this->isCreated() )
-			return this->findFirstFile( connection, searchExpression, winFindData, flags, context );
+protected:
+	Connection* _connection;
 
-		if( !this->findNextFile( winFindData ) ){
-			Reconstruct( this );
-			return false;
-		}
-		return true;
-	}
-
-	bool findFirstFile(
-		Connection& connection,
-		PTCHAR searchExpression,
-		WIN32_FIND_DATA& winFindData,
-		DWORD flags = FTP_TRANSFER_TYPE_BINARY,
-		DWORD_PTR context = NULL
-	){
-		if( !connection.isCreated() || NULL == searchExpression )
-			return false;
-
-		Reconstruct( this );
-		this->setHandle( ::FtpFindFirstFile( connection, searchExpression, &winFindData, flags, context ) );
+	bool findFirstFile( FtpFindParam& param ){
+		this->setHandle( ::FtpFindFirstFile(
+			*_connection,
+			param._filter,
+			&param._foundData,
+			param._flags,
+			param._context
+		) );
 		return this->isCreated();
 	}
 
@@ -130,52 +213,101 @@ public:
 		return( 0 != ::InternetFindNextFile( *this, &winFindData ) );
 	}
 
-	inline bool getFile(
-		Connection& connection,
-		PTCHAR remoteFile,
-		PTCHAR localFile,
-		DWORD flags = FTP_TRANSFER_TYPE_BINARY | INTERNET_FLAG_RELOAD )
-	{
-		if( !connection.isCreated() || NULL == remoteFile || NULL == localFile )
-			return false;
-		return( 0 != ::FtpGetFile( connection, remoteFile, localFile, false, FILE_ATTRIBUTE_NORMAL, flags, 0 ) );
+public:
+	inline Ftp( Connection* connection = NULL ) : _connection( connection ){
 	}
 
-	inline bool putFile(
-		Connection& connection,
-		PTCHAR localFile,
-		PTCHAR remoteFile,
-		DWORD flags = FTP_TRANSFER_TYPE_BINARY | INTERNET_FLAG_RELOAD )
-	{
-		if( !connection.isCreated() || NULL == remoteFile || NULL == localFile )
-			return false;
-		return( 0 != ::FtpPutFile( connection, localFile, remoteFile, flags, 0 ) );
+	bool findFile( FtpFindParam& param ){
+		if( !this->isCreated() )
+			return this->findFirstFile( param );
+		return this->findNextFile( param._foundData );
 	}
 
-	inline bool createDirectory( Connection& connection, PTCHAR dirName ){
-		if( !connection.isCreated() || NULL == dirName )
-			return false;
-		return( 0 != ::FtpCreateDirectory( connection, dirName ) );
+	inline bool getFile( FtpTransferParam& param ){
+		return( 0 != ::FtpGetFile(
+			*_connection,
+			param._remoteFile,
+			param._localFile,
+			param._isFailIfExists,
+			param._fileAttributes,
+			param._flags,
+			param._context
+		) );
+	}
+
+	inline bool putFile( FtpTransferParam& param ){
+		return( 0 != ::FtpPutFile(
+			*_connection,
+			param._localFile,
+			param._remoteFile,
+			param._flags,
+			param._context
+		) );
+	}
+
+	inline bool createDirectory( TCHAR* dirName ){
+		return( 0 != ::FtpCreateDirectory( *_connection, dirName ) );
+	}
+};
+
+// ============================================================
+struct HttpOpenParam : InternetParam< HttpOpenParam >{
+	TCHAR* _method;
+	TCHAR* _target;
+	TCHAR* _version;
+	TCHAR* _referer;
+	TCHAR* _acceptType;
+
+	inline HttpOpenParam( TCHAR* target ){
+		MemoryReset( *this );
+		this->setTarget( target ).setFlags( INTERNET_FLAG_RELOAD );
+	}
+
+	inline HttpOpenParam& setMethod( TCHAR* v = _T("GET") ){
+		_method = v;
+		return *this;
+	}
+
+	inline HttpOpenParam& setTarget( TCHAR* v ){
+		_target = v;
+		return *this;
+	}
+
+	inline HttpOpenParam& setVersion( TCHAR* v = _T("HTTP/1.1") ){
+		_version = v;
+		return *this;
+	}
+
+	inline HttpOpenParam& setReferer( TCHAR* v ){
+		_referer = v;
+		return *this;
+	}
+
+	inline HttpOpenParam& setAcceptType( TCHAR* v = _T("*/*") ){
+		_acceptType = v;
+		return *this;
 	}
 };
 
 // ============================================================
 class Http : public Handle{
 public:
-	bool open(
-		Connection& connection,
-		PTCHAR objectName,
-		PTCHAR verb = _T("GET"),
-		PTCHAR version = _T("HTTP/1.1"),
-		PTCHAR referer = NULL,
-		DWORD flags = INTERNET_FLAG_RELOAD,
-		DWORD context = 0
-	){
+	bool open( Connection& connection, HttpOpenParam& param ){
 		Reconstruct( this );
 		if( !connection.isCreated() )
 			return false;
 
-		this->setHandle( ::HttpOpenRequest( connection, verb, objectName, version, referer, NULL, flags, context ) );
+		TCHAR* text[] = { param._acceptType, NULL };
+		this->setHandle( ::HttpOpenRequest(
+			connection,
+			param._method,
+			param._target,
+			param._version,
+			param._referer,
+			(LPCTSTR*)&text,
+			param._flags,
+			param._context
+		) );
 		return this->isCreated();
 	}
 

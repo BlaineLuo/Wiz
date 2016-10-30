@@ -138,27 +138,30 @@ inline int Convert( wchar_t* dst, unsigned int maxLen, char* src, unsigned int c
 }
 
 // ============================================================
-template< typename T >
-T* ToFormalText( T* text, QWORD cent ){
+template< typename T, typename U >
+T* ToFormalText( T* text, U cent ){
 	enum{ buf_size = 64 };
 	T buffer[ buf_size ] = {0};
 	unsigned int head = buf_size - 2;
+	bool isNagitive = ( 0 > cent );
 
 	for( unsigned int i = 0; i < 2; i++ ){
-		buffer[ head-- ] = ( cent % 10 ) + 0x30;
+		buffer[ head-- ] = abs( cent % 10 ) + 0x30;
 		cent /= 10;
 	}
 	buffer[ head-- ] = 0x2E;
 
 	for( unsigned int i = 0; ; i++ ){
-		buffer[ head-- ] = ( cent % 10 ) + 0x30;
+		buffer[ head-- ] = abs( cent % 10 ) + 0x30;
 		cent /= 10;
-		if( cent <= 0 )
+		if( 0 == cent )
 			break;
 
 		if( i % 3 == 2 )
 			buffer[ head-- ] = 0x2C;
 	}
+	if( isNagitive )
+		buffer[ head-- ] = 0x2D;
 	return Copy( text, &buffer[ head + 1 ] );
 }
 

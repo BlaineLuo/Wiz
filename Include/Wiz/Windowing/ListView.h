@@ -17,32 +17,32 @@ struct LvElem : public Structure< E >{
 protected:
 	inline T& addMask( unsigned int v ){
 		(*this)->mask |= v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 
 	inline T& subMask( unsigned int v ){
 		(*this)->mask &= ~v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 
-	inline T& addRow( int v ){
+	inline T& setRow( int v ){
 		(*this)->iItem = v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 
-	inline T& addCol( int v ){
+	inline T& setCol( int v ){
 		(*this)->iSubItem = v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 
-	inline T& addText( TCHAR* v ){
+	inline T& setText( TCHAR* v ){
 		(*this)->pszText = v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 
-	inline T& addImage( int v ){
+	inline T& setImage( int v ){
 		(*this)->iImage = v;
-		return *(T*)this;
+		return (T&)*this;
 	}
 };
 
@@ -52,27 +52,27 @@ struct LvColumn : public LvElem< LvColumn, LVCOLUMN >{
 	inline LvColumn(){}
 
 	inline LvColumn( int idxCol ){
-		this->setCol( idxCol );
+		this->buildCol( idxCol );
 	}
 
 	inline LvColumn( int idxCol, TCHAR* text, int witdh, int format = LVCFMT_LEFT ){
-		this->setCol( idxCol ).setText( text ).setWidth( witdh ).setFormat( format );
+		this->buildCol( idxCol ).buildText( text ).buildWidth( witdh ).buildFormat( format );
 	}
 
-	inline LvColumn& setCol( int v = 0 ){
-		return this->addCol( v ).addMask( LVCF_SUBITEM );
+	inline LvColumn& buildCol( int v = 0 ){
+		return this->setCol( v ).addMask( LVCF_SUBITEM );
 	}
 
-	inline LvColumn& setText( TCHAR* v = NULL ){
-		return this->addText( v ).addMask( LVCF_TEXT );
+	inline LvColumn& buildText( TCHAR* v = NULL ){
+		return this->setText( v ).addMask( LVCF_TEXT );
 	}
 
-	inline LvColumn& setWidth( int v = 0 ){
+	inline LvColumn& buildWidth( int v = 0 ){
 		(*this)->cx = v;
 		return this->addMask( LVCF_WIDTH );
 	}
 
-	inline LvColumn& setFormat( int v = 0 ){
+	inline LvColumn& buildFormat( int v = 0 ){
 		(*this)->fmt = v;
 		return this->addMask( LVCF_FMT );
 	}
@@ -84,31 +84,31 @@ struct LvItem : public LvElem< LvItem, LVITEM >{
 	inline LvItem(){}
 
 	inline LvItem( int idxRow, int idxCol = 0 ){
-		this->addRow( idxRow ).addCol( idxCol );
+		this->setRow( idxRow ).setCol( idxCol );
 	}
 
 	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
 		static Text1024<> text;
 		text.clear();
 		VPRINTF( text, format );
-		this->addRow( idxRow ).addCol( idxCol ).setText( text );
+		this->setRow( idxRow ).setCol( idxCol ).buildText( text );
 	}
 
 	inline LvItem( int idxRow, int idxCol, SYSTEMTIME& time ){
 		static Text32<> text;
 		text.clear();
-		this->addRow( idxRow ).addCol( idxCol ).setText( SystemTime::CopyTo( time, &text[0] ) );
+		this->setRow( idxRow ).setCol( idxCol ).buildText( SystemTime::CopyTo( time, &text[0] ) );
 	}
 
-	inline LvItem& setText( TCHAR* v = NULL ){
-		return this->addText( v ).addMask( LVIF_TEXT );
+	inline LvItem& buildText( TCHAR* v = NULL ){
+		return this->setText( v ).addMask( LVIF_TEXT );
 	}
 
-	inline LvItem& setImage( int v = 0 ){
-		return this->addImage( v ).addMask( LVIF_IMAGE );
+	inline LvItem& buildImage( int v = 0 ){
+		return this->setImage( v ).addMask( LVIF_IMAGE );
 	}
 
-	inline LvItem& setParam( LPARAM v = 0 ){
+	inline LvItem& buildParam( LPARAM v = 0 ){
 		(*this)->lParam = v;
 		return this->addMask( LVIF_PARAM );
 	}
@@ -239,7 +239,7 @@ public:
 	}
 
 	LPARAM getItemParam( int indexRow ){
-		return this->getItem( LvItem( indexRow ).setParam() )->lParam;
+		return this->getItem( LvItem( indexRow ).buildParam() )->lParam;
 	}
 
 	inline bool getItemRect( int indexRow, int indexCol, Rect& rect ){

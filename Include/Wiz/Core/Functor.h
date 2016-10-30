@@ -9,6 +9,11 @@
 namespace Wiz{ namespace Core{ namespace Functor{
 
 template< typename T >
+inline T Abs( const T& a ){
+	return ( a >= 0 ? a : -a );
+}
+
+template< typename T >
 inline T Add( const T& a, const T& b ){
 	return ( a + b );
 }
@@ -48,6 +53,12 @@ inline T Gcd( const T a, const T b ){
 	if( 0 == b )
 		return a;
 	return Gcd( b, a % b );
+}
+
+template< typename T >
+inline T Lcm( const T a, const T b ){
+	T gcd = Gcd( a, b );
+	return gcd ? ( a / gcd * b ) : 0;
 }
 
 template< typename T >
