@@ -332,9 +332,7 @@ public:
 		return ::GetPrivateProfileInt( _section, key, valueDefault, _fileName );
 	}
 
-	inline bool setValue( const TCHAR* key, TCHAR* format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
+	inline bool setValue( const TCHAR* key, TCHAR* text ){
 		return( 0 != ::WritePrivateProfileString( _section, key, text, _fileName ) );
 	}
 };
@@ -355,25 +353,19 @@ public:
 		this->write( string, GetLength( string ) * sizeof(TCHAR) );
 	}
 
-	inline void putStringEx( TCHAR* format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
-		this->putString( text );
-	}
-
 	inline void putLastError( TCHAR* fileName, DWORD lineNum, TCHAR* label, DWORD errorCode = ::GetLastError() ){
-		this->putStringEx(
+		this->putString( Text1024<>(
 			_T("%s File=%s, Line=%d, Label=%s, ErrCode=%d\r\n"),
 			SystemTime().getLocalTime() >> &Text32<>()[0],
 			fileName,
 			lineNum,
 			label,
 			errorCode
-		);
+		) );
 	}
 
 	inline void putFormatMessage( TCHAR* fileName, DWORD lineNum, TCHAR* label, DWORD errorCode = ::GetLastError() ){
-		this->putStringEx(
+		this->putString( Text1024<>(
 			_T("%s File=%s, Line=%d, Label=%s, ErrCode=%d, ErrMsg=%s\r\n"),
 			SystemTime().getLocalTime() >> &Text32<>()[0],
 			fileName,
@@ -381,7 +373,7 @@ public:
 			label,
 			errorCode,
 			ErrorString().getErrorString( errorCode ).getString()
-		);
+		) );
 	}
 };
 

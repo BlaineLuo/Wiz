@@ -46,14 +46,8 @@ public:
 // ============================================================
 class Button : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("Button"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("Button") ) );
 	}
 
 	inline bool isChecked(){
@@ -68,13 +62,9 @@ public:
 // ============================================================
 class ComboBox : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("ComboBox"),
-			parent,
-			rect,
-			style | CBS_DROPDOWNLIST | WS_VSCROLL,
-			styleEx
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx(
+			opt.buildControl( _T("ComboBox") ).addStyle( CBS_DROPDOWNLIST | WS_VSCROLL )
 		);
 	}
 
@@ -118,14 +108,8 @@ public:
 // ============================================================
 class DateTimePicker : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("SysDateTimePick32"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("SysDateTimePick32") ) );
 	}
 
 	inline bool getTime( SYSTEMTIME& time ){
@@ -146,13 +130,8 @@ class Edit : public Control{
 public:
 	enum{ _maxTextLen = 0x7FFFFFFE };
 
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		if( !this->createControl(
-			_T("Edit"),
-			parent,
-			rect,
-			style | WS_BORDER | WS_TABSTOP | ES_LEFT,
-			styleEx ) )
+	inline bool create( WndOpt& opt ){
+		if( !this->createWindowEx( opt.buildControl( _T("Edit") ).addStyle( WS_BORDER | WS_TABSTOP | ES_LEFT ) ) )
 			return false;
 
 		this->setLimit( _maxTextLen );
@@ -172,14 +151,8 @@ public:
 #ifndef _WIN32_WCE
 class IpAddress : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("SysIPAddress32"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("SysIPAddress32") ) );
 	}
 
 	inline DWORD getIp(){
@@ -197,14 +170,8 @@ public:
 // ============================================================
 class ListBox : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("ListBox"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("ListBox") ) );
 	}
 
 	inline int getCount(){
@@ -257,14 +224,8 @@ public:
 // ============================================================
 class Slider : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("msctls_trackbar32"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("msctls_trackbar32") ) );
 	}
 
 	void setPosition( UINT pos ){
@@ -292,14 +253,8 @@ public:
 // ============================================================
 class Static : public Window{
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("Static"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("Static") ) );
 	}
 
 	void setBitmap( HBITMAP bitmap ){
@@ -319,13 +274,9 @@ public:
 class Tab : public Window{
 
 public:
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("SysTabControl32"),
-			parent,
-			rect,
-			style | TCS_TABS,
-			styleEx
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx(
+			opt.buildControl( _T("SysTabControl32") ).addStyle( TCS_TABS )
 		);
 	}
 

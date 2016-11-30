@@ -234,7 +234,7 @@ protected:
 
 		Text64<> text;
 		sockAddr.getHost( text, text._maxCount );
-		this->sendAllTargetString( _T("onAccept: Remote Address = %s."), &text );
+		this->sendAllTargetString( Text1024<>( _T("onAccept: Remote Address = %s."), &text ) );
 		return ret;
 	}
 
@@ -245,7 +245,7 @@ protected:
 
 		Text64<> text;
 		context._socket.getRemoteAddr().getHost( text, text._maxCount );
-		this->sendAllTargetString( _T("onClose: Remote Address = %s."), &text );
+		this->sendAllTargetString( Text1024<>( _T("onClose: Remote Address = %s."), &text ) );
 
 		//TODO: FD_CLOSE will not signal when Client Socket is not close.
 		return this->release( &context );

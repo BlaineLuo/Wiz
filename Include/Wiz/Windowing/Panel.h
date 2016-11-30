@@ -97,33 +97,32 @@ protected:
 		return this->onMessage( handler, WM_SIZE, id );
 	}
 
-	virtual LRESULT __cdecl onMessage( UINT message, WPARAM wParam, LPARAM lParam ){
-		UINT id = wParam;
-		UINT code = lParam;
+	virtual LRESULT __cdecl onMessage( MsgOpt& opt ){
+		UINT id = opt._wParam;
+		UINT code = opt._lParam;
 		HWND hwnd = NULL;
 
-		if( message == WM_COMMAND ){
-			id = LOWORD( wParam );
-			code = HIWORD( wParam );
-			hwnd = (HWND)lParam;
+		if( WM_COMMAND == opt._message ){
+			id = LOWORD( opt._wParam );
+			code = HIWORD( opt._wParam );
+			hwnd = (HWND)opt._lParam;
 		}
 
-		if( message == WM_NOTIFY ){
-			NMHDR* nmhdr = (NMHDR*)lParam;
+		if( WM_NOTIFY == opt._message ){
+			NMHDR* nmhdr = (NMHDR*)opt._lParam;
 			id = nmhdr->idFrom;
 			code = nmhdr->code;
 			hwnd = nmhdr->hwndFrom;
 		}
 
-		HandlerCtx* entry = _handlerSet.find( message, id, hwnd, code );
+		HandlerCtx* entry = _handlerSet.find( opt._message, id, hwnd, code );
 		if( NULL != entry ){
 			PtrHandler handler = entry->_handler;
-			return ( this->*handler )( wParam, lParam );
+			return ( this->*handler )( opt._wParam, opt._lParam );
 		}
 
 		// Handle Remain Message
-		//return this->onDefault( message, wParam, lParam );
-		return this->Window::onMessage( message, wParam, lParam );
+		return this->onDefault( opt );
 	}
 };
 
@@ -149,12 +148,7 @@ protected:
 	}
 
 public:
-	bool createFrame(
-		PTCHAR name,
-		DWORD style = 0,
-		DWORD styleEx = 0,
-		Rect& rect = Rect( 0, 0, 0, 0 )
-	){
+	bool create( TCHAR* name ){
 		WNDCLASS wndClass = {0};
 		//wndClass.cbSize = sizeof( wndClass );
 		wndClass.style = CS_DBLCLKS;
@@ -171,7 +165,7 @@ public:
 		if( !::RegisterClass( &wndClass ) )
 			return false;
 
-		if( !this->createWindowEx( name, name, style, styleEx, NULL, rect ) )
+		if( !this->createWindowEx( WndOpt().setClassName( name ).setWindowName( name ) ) )
 			return false;
 
 		this->onMessage( &Frame::onClose, WM_CLOSE );
@@ -222,10 +216,10 @@ public:
 		Window* wnd = WindowMap::CreateInstance()->find( window );
 		if( NULL == wnd )
 			return false;
-		return wnd->onMessage( message, wParam, lParam );
+		return wnd->onMessage( MsgOpt( message, wParam, lParam ) );
 	}
 
-	virtual LRESULT __cdecl onDefault( UINT message, WPARAM wParam, LPARAM lParam ){
+	virtual LRESULT __cdecl onDefault( MsgOpt& opt ){
 		return false;
 	}
 
@@ -260,7 +254,7 @@ public:
 		return true;
 	}
 
-	bool loadDialog( PTCHAR resourceName, Window* parent ){
+	bool loadDialog( TCHAR* resourceName, Window* parent ){
 
 		this->setParent( parent );
 
@@ -330,7 +324,7 @@ public:
 		MemoryReset( _notifyIconData );
 	}
 
-	void createTray( UINT iconId, PTCHAR tip ){
+	void createTray( UINT iconId, TCHAR* tip ){
 		MemoryReset( _notifyIconData );
 		_notifyIconData.cbSize = sizeof( _notifyIconData );
 		_notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;

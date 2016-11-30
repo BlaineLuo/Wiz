@@ -146,13 +146,13 @@ T* ToFormalText( T* text, U cent ){
 	bool isNagitive = ( 0 > cent );
 
 	for( unsigned int i = 0; i < 2; i++ ){
-		buffer[ head-- ] = abs( cent % 10 ) + 0x30;
+		buffer[ head-- ] = Functor::Abs( cent % 10 ) + 0x30;
 		cent /= 10;
 	}
 	buffer[ head-- ] = 0x2E;
 
 	for( unsigned int i = 0; ; i++ ){
-		buffer[ head-- ] = abs( cent % 10 ) + 0x30;
+		buffer[ head-- ] = Functor::Abs( cent % 10 ) + 0x30;
 		cent /= 10;
 		if( 0 == cent )
 			break;
@@ -199,7 +199,14 @@ class Text64 : public StringArray< T, 64 >{};
 
 // ============================================================
 template< typename T = TCHAR >
-class Text1024 : public StringArray< T, 1024 >{};
+class Text1024 : public StringArray< T, 1024 >{
+public:
+	inline Text1024(){}
+
+	inline Text1024( T* format, ... ){
+		VPRINTF( *this, format );
+	}
+};
 
 }}
 // ===================================Namespace Tail==========================================

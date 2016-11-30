@@ -22,7 +22,7 @@
 namespace Wiz{ namespace Windowing{
 	class WindowMap;
 	class Window;
-} }
+}}
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
@@ -88,7 +88,7 @@ public:
 	inline Resource() : _module(NULL)
 	{}
 
-	inline bool find( PTCHAR name, PTCHAR type, HMODULE module = NULL ){
+	inline bool find( TCHAR* name, TCHAR* type, HMODULE module = NULL ){
 		_module = module;
 		this->setHandle( ::FindResource( _module, name, type ) );
 		return this->isCreated();
@@ -128,8 +128,7 @@ public:
 		if( !this->isCreated() )
 			return *this;
 
-		this->setNotifyByPos();
-		return *this;
+		return this->setNotifyByPos();
 	}
 
 	Menu& createPopup(){
@@ -137,37 +136,42 @@ public:
 		if( !this->isCreated() )
 			return *this;
 
-		this->setNotifyByPos();
-		return *this;
+		return this->setNotifyByPos();
 	}
 
-	void setNotifyByPos(){
+	Menu& setNotifyByPos(){
 		MENUINFO menuInfo = {0};
 		menuInfo.cbSize = sizeof(menuInfo);
 		::GetMenuInfo( *this, &menuInfo );
 		menuInfo.fMask = MIM_STYLE;
 		menuInfo.dwStyle |= MNS_NOTIFYBYPOS;
 		::SetMenuInfo( *this, &menuInfo );
+		return *this;
 	}
 
-	inline bool insert( UINT index, UINT flags, UINT_PTR param = 0, PTCHAR string = NULL ){
-		return( 0 != ::InsertMenu( *this, index, flags, param, string ) );
+	inline Menu& insert( UINT index, UINT flags, UINT_PTR param = 0, TCHAR* string = NULL ){
+		::InsertMenu( *this, index, flags, param, string );
+		return *this;
 	}
 
-	inline bool insertItem( UINT index, PTCHAR string ){
-		return this->insert( index, MF_BYPOSITION | MF_STRING, 0, string );
+	inline Menu& insertItem( UINT index, TCHAR* string ){
+		this->insert( index, MF_BYPOSITION | MF_STRING, 0, string );
+		return *this;
 	}
 
-	inline bool insertMenu( UINT index, PTCHAR string, Menu& menu ){
-		return this->insert( index, MF_BYPOSITION | MF_POPUP, (UINT_PTR)menu.getHandle(), string );
+	inline Menu& insertMenu( UINT index, TCHAR* string, HMENU menu ){
+		this->insert( index, MF_BYPOSITION | MF_POPUP, (UINT_PTR)menu, string );
+		return *this;
 	}
 
-	inline bool insertSeparator( UINT index ){
-		return this->insert( index, MF_BYPOSITION | MF_SEPARATOR );
+	inline Menu& insertSeparator( UINT index ){
+		this->insert( index, MF_BYPOSITION | MF_SEPARATOR );
+		return *this;
 	}
 
-	inline void setChecked( UINT index, bool isChecked ){
+	inline Menu& setChecked( UINT index, bool isChecked ){
 		::CheckMenuItem( *this, index, MF_BYPOSITION | ( isChecked ? MF_CHECKED : MF_UNCHECKED ) );
+		return *this;
 	}
 
 	inline bool track( HWND parent, POINT& point, UINT flags = TPM_LEFTALIGN | TPM_RIGHTBUTTON ){
@@ -191,6 +195,100 @@ public:
 };
 
 // ============================================================
+struct WndOpt{
+	typedef WndOpt This;
+
+	Window* _parent;
+	Rect _rect;
+	DWORD _style;
+	DWORD _styleEx;
+	TCHAR* _className;
+	TCHAR* _windowName;
+
+	inline WndOpt(
+		Window* parent = NULL,
+		Rect& rect = Rect(),
+		DWORD style = 0,
+		DWORD styleEx = 0
+	){
+		MemoryReset( *this );
+		this->setParent( parent ).setRect( rect ).setStyle( style ).setStyleEx( styleEx );
+	}
+
+	inline This& buildControl( TCHAR* className ){
+		return this->setClassName( className ).addStyle( WS_VISIBLE | WS_CHILD );
+	}
+
+	inline This& addStyle( DWORD v ){
+		_style |= v;
+		return (This&)*this;
+	}
+
+	inline This& addStyleEx( DWORD v ){
+		_styleEx |= v;
+		return (This&)*this;
+	}
+
+	inline This& setParent( Window* v ){
+		_parent = v;
+		return (This&)*this;
+	}
+
+	inline This& setRect( Rect& v ){
+		_rect = v;
+		return (This&)*this;
+	}
+
+	inline This& setStyle( DWORD v ){
+		_style = v;
+		return (This&)*this;
+	}
+
+	inline This& setStyleEx( DWORD v ){
+		_styleEx = v;
+		return (This&)*this;
+	}
+
+	inline This& setClassName( TCHAR* v ){
+		_className = v;
+		return (This&)*this;
+	}
+
+	inline This& setWindowName( TCHAR* v ){
+		_windowName = v;
+		return (This&)*this;
+	}
+};
+
+// ============================================================
+struct MsgOpt{
+	typedef MsgOpt This;
+
+	UINT _message;
+	WPARAM _wParam;
+	LPARAM _lParam;
+
+	inline MsgOpt( UINT message = 0, WPARAM wParam = 0, LPARAM lParam = 0 ){
+		this->setMessage( message ).setWParam( wParam ).setLParam( lParam );
+	}
+
+	inline This& setMessage( UINT v ){
+		_message = v;
+		return (This&)*this;
+	}
+
+	inline This& setWParam( WPARAM v ){
+		_wParam = v;
+		return (This&)*this;
+	}
+
+	inline This& setLParam( LPARAM v ){
+		_lParam = v;
+		return (This&)*this;
+	}
+};
+
+// ============================================================
 class Window : public HandleT< HWND, NULL >{
 
 public:
@@ -198,13 +296,13 @@ public:
 
 protected:
 	Window* _parent;
-	Window* _nextTarget;
+	Window* _target;
 	Children _children;
 
 public:
 	inline Window(){
 		this->setParent( NULL );
-		this->setNextTarget( NULL );
+		this->setTarget( NULL );
 	}
 
 	inline ~Window(){
@@ -214,17 +312,17 @@ public:
 	}
 
 	static LRESULT __stdcall WindowProcedure( HWND window, UINT message, WPARAM wParam, LPARAM lParam ){
-
+		MsgOpt opt( message, wParam, lParam );
 		Window* wnd = WindowMap::CreateInstance()->find( window );
 		if( NULL != wnd )
-			return wnd->onMessage( message, wParam, lParam );
+			return wnd->onMessage( opt );
 
 		// If hWnd not found in Window Map.
-		return Window::DefWndProcedure( window, message, wParam, lParam );
+		return Window::DefWndProcedure( window, opt );
 	}
 
-	static LRESULT __stdcall DefWndProcedure( HWND window, UINT message, WPARAM wParam, LPARAM lParam ){
-		return ::DefWindowProc( window, message, wParam, lParam );
+	static LRESULT __stdcall DefWndProcedure( HWND window, MsgOpt& opt ){
+		return ::DefWindowProc( window, opt._message, opt._wParam, opt._lParam );
 	}
 
 	static BOOL __stdcall EnumChildProcedure( HWND child, LPARAM lParam ){
@@ -232,40 +330,12 @@ public:
 		return true;
 	}
 
-	virtual LRESULT __cdecl onMessage( UINT message, WPARAM wParam, LPARAM lParam ){
-		UINT id = wParam;
-		UINT code = lParam;
-
-		// Handle WM_COMMAND Message
-		if( message == WM_COMMAND ){
-			id = LOWORD( wParam );
-			code = HIWORD( wParam );
-		}
-
-		// Handle WM_NOTIFY Message
-		if( message == WM_NOTIFY ){
-			NMHDR* nmhdr = (NMHDR*)lParam;
-			id = nmhdr->idFrom;
-			code = nmhdr->code;
-		}
-
-		// Handle the Message defined in the MsgMap.
-		//for( MessageMap* msgMap = this->getMessageMap(); msgMap != NULL; msgMap = msgMap->_base ){
-
-		//	MessageEntry* entry = msgMap->find( message, id, code );
-		//	if( entry == NULL )
-		//		continue;
-
-		//	PtrHandler handler = entry->_handler;
-		//	return ( this->*handler )( wParam, lParam );
-		//}
-
-		// Handle Remain Message
-		return this->onDefault( message, wParam, lParam );
+	virtual LRESULT __cdecl onMessage( MsgOpt& opt ){
+		return this->onDefault( opt );
 	}
 
-	virtual LRESULT __cdecl onDefault( UINT message, WPARAM wParam, LPARAM lParam ){
-		return Window::DefWndProcedure( *this, message, wParam, lParam );
+	virtual LRESULT __cdecl onDefault( MsgOpt& opt ){
+		return Window::DefWndProcedure( *this, opt );
 	}
 
 	inline bool setHandle( HWND window ){
@@ -273,25 +343,19 @@ public:
 		return WindowMap::CreateInstance()->insertV( *this, this );
 	}
 
-	bool createWindowEx(
-		PTCHAR className,
-		PTCHAR windowName,
-		DWORD style,
-		DWORD styleEx,
-		Window* parent,
-		Rect& rect = Rect( 0, 0, 0, 0 )
-	){
-		this->setParent( parent );
+	bool createWindowEx( WndOpt& opt ){
+		this->setParent( opt._parent );
 
 		HWND hParent = this->GetNullHandle();
 		if( this->getParent() != NULL )
 			hParent = this->getParent()->getHandle();
 
+		Rect& rect = opt._rect;
 		this->setHandle( ::CreateWindowEx(
-			styleEx,
-			className,
-			windowName,
-			style,
+			opt._styleEx,
+			opt._className,
+			opt._windowName,
+			opt._style,
 			rect->left,
 			rect->top,
 			rect->right - rect->left,
@@ -302,16 +366,6 @@ public:
 			NULL
 		) );
 		return this->isCreated();
-	}
-
-	inline bool createControl(
-		PTCHAR className,
-		Window* parent,
-		Rect& rect,
-		DWORD style = 0,
-		DWORD styleEx = 0
-	){
-		return this->createWindowEx( className, NULL, style | WS_VISIBLE | WS_CHILD, styleEx, parent, rect );
 	}
 
 	inline bool destroyWindow(){
@@ -366,7 +420,7 @@ public:
 		::SetWindowLong( *this, GWL_WNDPROC, (LONG)procedure );
 	}
 
-	inline void getText( PTCHAR text, UINT textLen ){
+	inline void getText( TCHAR* text, UINT textLen ){
 		::GetWindowText( *this, text, textLen );
 	}
 
@@ -382,14 +436,8 @@ public:
 		return ::_tstol( text );
 	}
 
-	inline bool setText( PTCHAR text ){
+	inline bool setText( TCHAR* text ){
 		return( 0 != ::SetWindowText( *this, text ) );
-	}
-
-	inline bool setTextEx( PTCHAR format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
-		return this->setText( text );
 	}
 
 	inline void setTitleIcon( HICON icon ){
@@ -419,12 +467,12 @@ public:
 	}
 #endif
 
-	inline bool getClientRect( RECT& r ){
-		return( 0 != ::GetClientRect( *this, &r ) );
+	inline bool getClientRect( RECT& rect ){
+		return( 0 != ::GetClientRect( *this, &rect ) );
 	}
 
-	inline bool getWindowRect( RECT& r ){
-		return( 0 != ::GetWindowRect( *this, &r ) );
+	inline bool getWindowRect( RECT& rect ){
+		return( 0 != ::GetWindowRect( *this, &rect ) );
 	}
 
 	inline Window* getParent(){
@@ -450,7 +498,7 @@ public:
 		return _children.insertNodeAtTail( &child );
 	}
 
-	inline bool setPosition( HWND windowAfter, UINT flags, Rect& rect = Rect( 0, 0, 0, 0 ) ){
+	inline bool setPosition( HWND windowAfter, UINT flags, Rect& rect = Rect() ){
 		return( 0 != ::SetWindowPos(
 			*this,
 			windowAfter,
@@ -462,7 +510,7 @@ public:
 		) );
 	}
 
-	inline bool setRect( Rect& rect = Rect( 0, 0, 0, 0 ) ){
+	inline bool setRect( Rect& rect = Rect() ){
 		return this->setPosition( NULL, SWP_NOZORDER, rect );
 	}
 
@@ -482,11 +530,8 @@ public:
 	}
 #endif
 
-	inline int showMessage( UINT type, PTCHAR format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
+	inline int showMessage( UINT type, TCHAR* text ){
 		return ::MessageBox( *this, text, _T("Notice"), type | MB_TOPMOST | MB_APPLMODAL | MB_ICONINFORMATION );
-		//return MessageBox( *this, text, _T("Notice"), MB_OKCANCEL | MB_TOPMOST | MB_APPLMODAL | MB_ICONQUESTION );
 	}
 
 	inline LRESULT sendMessage( UINT message, WPARAM wParam, LPARAM lParam ){
@@ -505,44 +550,30 @@ public:
 		return( 0 != ::KillTimer( *this, id ) );
 	}
 
-	inline Window* getNextTarget(){
-		return _nextTarget;
+	inline Window* getTarget(){
+		return _target;
 	}
 
-	inline void setNextTarget( Window* nextTarget ){
-		_nextTarget = nextTarget;
+	inline void setTarget( Window* target ){
+		_target = target;
 	}
 
 	void sendAllTarget( UINT message, WPARAM wParam = 0, LPARAM lParam = 0 ){
-		for( Window* target = this; target != NULL; target = target->getNextTarget() )
+		for( Window* target = this; target != NULL; target = target->getTarget() )
 			target->sendMessage( message, wParam, lParam );
 	}
 
 	void postAllTarget( UINT message, WPARAM wParam = 0, LPARAM lParam = 0 ){
-		for( Window* target = this; target != NULL; target = target->getNextTarget() )
+		for( Window* target = this; target != NULL; target = target->getTarget() )
 			target->postMessage( message, wParam, lParam );
 	}
 
-	inline void sendAllTargetString( PTCHAR format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
-		this->sendAllTarget( WM_STRING, (WPARAM)&text );
+	inline void sendAllTargetString( TCHAR* text ){
+		this->sendAllTarget( WM_STRING, (WPARAM)text );
 	}
 
-	inline void sendAllTargetString( UINT tag, PTCHAR format, ... ){
-		Text1024<> text;
-		VPRINTF( text, format );
-		this->sendAllTarget( WM_STRING, (WPARAM)&text, tag );
-	}
-
-	inline void sendAllTargetError( PTCHAR fileName, DWORD lineNum, DWORD errorCode = ::GetLastError() ){
-		this->sendAllTargetString(
-			_T("File=%s, Line=%d, ECode=%d, %s."),
-			fileName,
-			lineNum,
-			errorCode,
-			ErrorString().getErrorString( errorCode ).getString()
-		);
+	inline void sendAllTargetString( UINT tag, TCHAR* text ){
+		this->sendAllTarget( WM_STRING, (WPARAM)text, tag );
 	}
 };
 

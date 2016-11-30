@@ -9,40 +9,42 @@
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
-;
+
 // ============================================================
 template< typename T, typename E >
 struct LvElem : public Structure< E >{
 
+	typedef T This;
+
 protected:
-	inline T& addMask( unsigned int v ){
+	inline This& addMask( unsigned int v ){
 		(*this)->mask |= v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& subMask( unsigned int v ){
+	inline This& subMask( unsigned int v ){
 		(*this)->mask &= ~v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& setRow( int v ){
+	inline This& setRow( int v ){
 		(*this)->iItem = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& setCol( int v ){
+	inline This& setCol( int v ){
 		(*this)->iSubItem = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& setText( TCHAR* v ){
+	inline This& setText( TCHAR* v ){
 		(*this)->pszText = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& setImage( int v ){
+	inline This& setImage( int v ){
 		(*this)->iImage = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 };
 
@@ -59,20 +61,20 @@ struct LvColumn : public LvElem< LvColumn, LVCOLUMN >{
 		this->buildCol( idxCol ).buildText( text ).buildWidth( witdh ).buildFormat( format );
 	}
 
-	inline LvColumn& buildCol( int v = 0 ){
+	inline This& buildCol( int v = 0 ){
 		return this->setCol( v ).addMask( LVCF_SUBITEM );
 	}
 
-	inline LvColumn& buildText( TCHAR* v = NULL ){
+	inline This& buildText( TCHAR* v = NULL ){
 		return this->setText( v ).addMask( LVCF_TEXT );
 	}
 
-	inline LvColumn& buildWidth( int v = 0 ){
+	inline This& buildWidth( int v = 0 ){
 		(*this)->cx = v;
 		return this->addMask( LVCF_WIDTH );
 	}
 
-	inline LvColumn& buildFormat( int v = 0 ){
+	inline This& buildFormat( int v = 0 ){
 		(*this)->fmt = v;
 		return this->addMask( LVCF_FMT );
 	}
@@ -83,32 +85,19 @@ struct LvItem : public LvElem< LvItem, LVITEM >{
 
 	inline LvItem(){}
 
-	inline LvItem( int idxRow, int idxCol = 0 ){
-		this->setRow( idxRow ).setCol( idxCol );
-	}
-
-	inline LvItem( int idxRow, int idxCol, TCHAR* format, ... ){
-		static Text1024<> text;
-		text.clear();
-		VPRINTF( text, format );
+	inline LvItem( int idxRow, int idxCol = 0, TCHAR* text = NULL ){
 		this->setRow( idxRow ).setCol( idxCol ).buildText( text );
 	}
 
-	inline LvItem( int idxRow, int idxCol, SYSTEMTIME& time ){
-		static Text32<> text;
-		text.clear();
-		this->setRow( idxRow ).setCol( idxCol ).buildText( SystemTime::CopyTo( time, &text[0] ) );
-	}
-
-	inline LvItem& buildText( TCHAR* v = NULL ){
+	inline This& buildText( TCHAR* v = NULL ){
 		return this->setText( v ).addMask( LVIF_TEXT );
 	}
 
-	inline LvItem& buildImage( int v = 0 ){
+	inline This& buildImage( int v = 0 ){
 		return this->setImage( v ).addMask( LVIF_IMAGE );
 	}
 
-	inline LvItem& buildParam( LPARAM v = 0 ){
+	inline This& buildParam( LPARAM v = 0 ){
 		(*this)->lParam = v;
 		return this->addMask( LVIF_PARAM );
 	}
@@ -170,14 +159,8 @@ public:
 		return CDRF_DODEFAULT;
 	}
 
-	inline bool create( Window* parent, Rect& rect, DWORD style = 0, DWORD styleEx = 0 ){
-		return this->createControl(
-			_T("SysListView32"),
-			parent,
-			rect,
-			style,
-			styleEx
-		);
+	inline bool create( WndOpt& opt ){
+		return this->createWindowEx( opt.buildControl( _T("SysListView32") ) );
 	}
 
 	bool addColumn( int indexCol, PTCHAR name, int width = 100, int format = LVCFMT_LEFT ){
@@ -349,7 +332,7 @@ public:
 	}
 
 	void createItemEdit( Window* target ){
-		_focusedEdit.create( target, Rect() );
+		_focusedEdit.create( WndOpt( target ) );
 		_focusedEdit.setParent( this );
 		_focusedEdit.setFont( this->getFont() );
 	}
@@ -378,7 +361,7 @@ public:
 	}
 
 	void createItemComboBox( Window* target ){
-		_focusedComboBox.create( target, Rect() );
+		_focusedComboBox.create( WndOpt( target ) );
 		_focusedComboBox.setParent( this );
 		_focusedComboBox.setFont( this->getFont() );
 	}
@@ -406,7 +389,7 @@ public:
 	}
 
 	void createItemDateTimePicker( Window* target ){
-		_focusedDateTimePicker.create( target, Rect() );
+		_focusedDateTimePicker.create( WndOpt( target ) );
 		_focusedDateTimePicker.setParent( this );
 		_focusedDateTimePicker.setFont( this->getFont() );
 	}

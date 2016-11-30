@@ -17,18 +17,20 @@ using namespace Wiz::String;
 
 // ============================================================
 template< typename T >
-struct InternetParam{
+struct InternetOpt{
+	typedef T This;
+
 	DWORD _flags;
 	DWORD_PTR _context;
 
-	inline T& setFlags( DWORD v ){
+	inline This& setFlags( DWORD v ){
 		_flags = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 
-	inline T& setContext( DWORD_PTR v ){
+	inline This& setContext( DWORD_PTR v ){
 		_context = v;
-		return (T&)*this;
+		return (This&)*this;
 	}
 };
 
@@ -58,18 +60,18 @@ public:
 };
 
 // ============================================================
-struct ConnectionParam : InternetParam< ConnectionParam >{
+struct ConnectionOpt : InternetOpt< ConnectionOpt >{
 	TCHAR* _server;
 	DWORD _port;
 	TCHAR* _username;
 	TCHAR* _password;
 	DWORD _service;
 
-	inline ConnectionParam(){
+	inline ConnectionOpt(){
 		MemoryReset( *this );
 	}
 
-	inline ConnectionParam& buildFtp( TCHAR* server, WORD port, TCHAR* username, TCHAR* password ){
+	inline This& buildFtp( TCHAR* server, WORD port, TCHAR* username, TCHAR* password ){
 		this->setServer( server ).
 			setPort( port ).
 			setService( INTERNET_SERVICE_FTP ).
@@ -78,32 +80,32 @@ struct ConnectionParam : InternetParam< ConnectionParam >{
 		return *this;
 	}
 
-	inline ConnectionParam& buildHttp( TCHAR* server, WORD port ){
+	inline This& buildHttp( TCHAR* server, WORD port ){
 		this->setServer( server ).setPort( port ).setService( INTERNET_SERVICE_HTTP );
 		return *this;
 	}
 
-	inline ConnectionParam& setServer( TCHAR* v ){
+	inline This& setServer( TCHAR* v ){
 		_server = v;
 		return *this;
 	}
 
-	inline ConnectionParam& setPort( WORD v ){
+	inline This& setPort( WORD v ){
 		_port = v;
 		return *this;
 	}
 
-	inline ConnectionParam& setUsername( TCHAR* v ){
+	inline This& setUsername( TCHAR* v ){
 		_username = v;
 		return *this;
 	}
 
-	inline ConnectionParam& setPassword( TCHAR* v ){
+	inline This& setPassword( TCHAR* v ){
 		_password = v;
 		return *this;
 	}
 
-	inline ConnectionParam& setService( DWORD v ){
+	inline This& setService( DWORD v ){
 		_service = v;
 		return *this;
 	}
@@ -112,20 +114,20 @@ struct ConnectionParam : InternetParam< ConnectionParam >{
 // ============================================================
 class Connection : public Handle{
 public:
-	inline bool open( Internet& internet, ConnectionParam& param ){
+	inline bool open( Internet& internet, ConnectionOpt& opt ){
 		Reconstruct( this );
 		if( !internet.isCreated() )
 			return false;
 
 		this->setHandle( ::InternetConnect(
 			internet,
-			param._server,
-			param._port,
-			param._username,
-			param._password,
-			param._service,
-			param._flags,
-			param._context
+			opt._server,
+			opt._port,
+			opt._username,
+			opt._password,
+			opt._service,
+			opt._flags,
+			opt._context
 		) );
 		return this->isCreated();
 	}
@@ -136,29 +138,29 @@ public:
 };
 
 // ============================================================
-struct FtpFindParam : InternetParam< FtpFindParam >{
+struct FtpFindOpt : InternetOpt< FtpFindOpt >{
 	WIN32_FIND_DATA _foundData;
 	TCHAR* _filter;
 
-	inline FtpFindParam( TCHAR* filter, DWORD flags = FTP_TRANSFER_TYPE_BINARY ){
+	inline FtpFindOpt( TCHAR* filter, DWORD flags = FTP_TRANSFER_TYPE_BINARY ){
 		MemoryReset( *this );
 		this->setFilter( filter ).setFlags( flags );
 	}
 
-	inline FtpFindParam& setFilter( TCHAR* v ){
+	inline This& setFilter( TCHAR* v ){
 		_filter = v;
 		return *this;
 	}
 };
 
 // ============================================================
-struct FtpTransferParam : InternetParam< FtpTransferParam >{
+struct FtpTransferOpt : InternetOpt< FtpTransferOpt >{
 	TCHAR* _remoteFile;
 	TCHAR* _localFile;
 	BOOL _isFailIfExists;
 	DWORD _fileAttributes;
 
-	inline FtpTransferParam(
+	inline FtpTransferOpt(
 		TCHAR* remoteFile,
 		TCHAR* localFile,
 		DWORD flags = FTP_TRANSFER_TYPE_BINARY | INTERNET_FLAG_RELOAD
@@ -171,22 +173,22 @@ struct FtpTransferParam : InternetParam< FtpTransferParam >{
 			setFlags( flags );
 	}
 
-	inline FtpTransferParam& setRemoteFile( TCHAR* v ){
+	inline This& setRemoteFile( TCHAR* v ){
 		_remoteFile = v;
 		return *this;
 	}
 
-	inline FtpTransferParam& setLocalFile( TCHAR* v ){
+	inline This& setLocalFile( TCHAR* v ){
 		_localFile = v;
 		return *this;
 	}
 
-	inline FtpTransferParam& setIsFailIfExists( BOOL v ){
+	inline This& setIsFailIfExists( BOOL v ){
 		_isFailIfExists = v;
 		return *this;
 	}
 
-	inline FtpTransferParam& setFileAttributes( DWORD v ){
+	inline This& setFileAttributes( DWORD v ){
 		_fileAttributes = v;
 		return *this;
 	}
@@ -198,13 +200,13 @@ class Ftp : public Handle{
 protected:
 	Connection* _connection;
 
-	bool findFirstFile( FtpFindParam& param ){
+	bool findFirstFile( FtpFindOpt& opt ){
 		this->setHandle( ::FtpFindFirstFile(
 			*_connection,
-			param._filter,
-			&param._foundData,
-			param._flags,
-			param._context
+			opt._filter,
+			&opt._foundData,
+			opt._flags,
+			opt._context
 		) );
 		return this->isCreated();
 	}
@@ -217,31 +219,31 @@ public:
 	inline Ftp( Connection* connection = NULL ) : _connection( connection ){
 	}
 
-	bool findFile( FtpFindParam& param ){
+	bool findFile( FtpFindOpt& opt ){
 		if( !this->isCreated() )
-			return this->findFirstFile( param );
-		return this->findNextFile( param._foundData );
+			return this->findFirstFile( opt );
+		return this->findNextFile( opt._foundData );
 	}
 
-	inline bool getFile( FtpTransferParam& param ){
+	inline bool getFile( FtpTransferOpt& opt ){
 		return( 0 != ::FtpGetFile(
 			*_connection,
-			param._remoteFile,
-			param._localFile,
-			param._isFailIfExists,
-			param._fileAttributes,
-			param._flags,
-			param._context
+			opt._remoteFile,
+			opt._localFile,
+			opt._isFailIfExists,
+			opt._fileAttributes,
+			opt._flags,
+			opt._context
 		) );
 	}
 
-	inline bool putFile( FtpTransferParam& param ){
+	inline bool putFile( FtpTransferOpt& opt ){
 		return( 0 != ::FtpPutFile(
 			*_connection,
-			param._localFile,
-			param._remoteFile,
-			param._flags,
-			param._context
+			opt._localFile,
+			opt._remoteFile,
+			opt._flags,
+			opt._context
 		) );
 	}
 
@@ -251,39 +253,39 @@ public:
 };
 
 // ============================================================
-struct HttpOpenParam : InternetParam< HttpOpenParam >{
+struct HttpOpenOpt : InternetOpt< HttpOpenOpt >{
 	TCHAR* _method;
 	TCHAR* _target;
 	TCHAR* _version;
 	TCHAR* _referer;
 	TCHAR* _acceptType;
 
-	inline HttpOpenParam( TCHAR* target ){
+	inline HttpOpenOpt( TCHAR* target ){
 		MemoryReset( *this );
 		this->setTarget( target ).setFlags( INTERNET_FLAG_RELOAD );
 	}
 
-	inline HttpOpenParam& setMethod( TCHAR* v = _T("GET") ){
+	inline This& setMethod( TCHAR* v = _T("GET") ){
 		_method = v;
 		return *this;
 	}
 
-	inline HttpOpenParam& setTarget( TCHAR* v ){
+	inline This& setTarget( TCHAR* v ){
 		_target = v;
 		return *this;
 	}
 
-	inline HttpOpenParam& setVersion( TCHAR* v = _T("HTTP/1.1") ){
+	inline This& setVersion( TCHAR* v = _T("HTTP/1.1") ){
 		_version = v;
 		return *this;
 	}
 
-	inline HttpOpenParam& setReferer( TCHAR* v ){
+	inline This& setReferer( TCHAR* v ){
 		_referer = v;
 		return *this;
 	}
 
-	inline HttpOpenParam& setAcceptType( TCHAR* v = _T("*/*") ){
+	inline This& setAcceptType( TCHAR* v = _T("*/*") ){
 		_acceptType = v;
 		return *this;
 	}
@@ -292,21 +294,21 @@ struct HttpOpenParam : InternetParam< HttpOpenParam >{
 // ============================================================
 class Http : public Handle{
 public:
-	bool open( Connection& connection, HttpOpenParam& param ){
+	bool open( Connection& connection, HttpOpenOpt& opt ){
 		Reconstruct( this );
 		if( !connection.isCreated() )
 			return false;
 
-		TCHAR* text[] = { param._acceptType, NULL };
+		TCHAR* text[] = { opt._acceptType, NULL };
 		this->setHandle( ::HttpOpenRequest(
 			connection,
-			param._method,
-			param._target,
-			param._version,
-			param._referer,
+			opt._method,
+			opt._target,
+			opt._version,
+			opt._referer,
 			(LPCTSTR*)&text,
-			param._flags,
-			param._context
+			opt._flags,
+			opt._context
 		) );
 		return this->isCreated();
 	}

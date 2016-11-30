@@ -1,10 +1,9 @@
 ﻿// ============================================================
-// @Brief: System Classes
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_SYSTEM_H__
-#define __WIZ_SYSTEM_H__
+#ifndef __WIZ_SYSTEM_FORWARD_H__
+#define __WIZ_SYSTEM_FORWARD_H__
 
 #include "Wiz/String/StringT.h"
 //#include <ShlWApi.h>
@@ -71,15 +70,11 @@ static DWORD GetRandom(){
 }
 
 // ============================================================
-inline void ShowMessage( const char* format, ... ){
-	Text1024< char > text;
-	VPRINTF( text, format );
+inline void ShowMessage( const char* text ){
 	::MessageBoxA( NULL, text, "Message", MB_OK | MB_TOPMOST );
 }
 
-inline void ShowMessage( const wchar_t* format, ... ){
-	Text1024< wchar_t > text;
-	VPRINTF( text, format );
+inline void ShowMessage( const wchar_t* text ){
 	::MessageBoxW( NULL, text, L"Message", MB_OK | MB_TOPMOST );
 }
 

@@ -6,7 +6,7 @@
 #ifndef __WIZ_GRAPHING_GDI_H__
 #define __WIZ_GRAPHING_GDI_H__
 
-#include "Wiz/System.h"
+#include "Wiz/System/Forward.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Graphing{ namespace Gdi{
@@ -153,10 +153,9 @@ public:
 // ============================================================
 class LogicFont : public Structure< LOGFONT >{
 public:
-	inline LogicFont& set( TCHAR* name, long height, long width ){
+	inline LogicFont( TCHAR* name, long height, long width ){
 		this->set( name );
 		this->set( height, width );
-		return *this;
 	}
 
 	inline LogicFont& set( TCHAR* name ){
@@ -190,9 +189,8 @@ enum Fid{
 class FontSet : public Array< Font, Fid_Max >{
 
 	DEFINE_SINGLE_EX( FontSet,
-		LogicFont lf;
-		this->get( Fid_Arial_14 ).create( lf.set( _T("Arial") ).set( 14, 5 ) );
-		this->get( Fid_MsShellDlg_12 ).create( lf.set( _T("MS Shell Dlg") ).set( 12, 5 ) );
+		this->get( Fid_Arial_14 ).create( LogicFont( _T("Arial"), 14, 5 ) );
+		this->get( Fid_MsShellDlg_12 ).create( LogicFont( _T("MS Shell Dlg"), 12, 5 ) );
 	, ; );
 
 public:

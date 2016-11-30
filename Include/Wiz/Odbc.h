@@ -158,12 +158,12 @@ public:
 		if( NULL == entry )
 			return;
 
-		target.sendAllTargetString(
+		target.sendAllTargetString( Text1024<>(
 			_T("NativeCode = %d, State = %s, Message = %s\r\n"),
 			entry->_nativeCode,
 			&entry->_state,
 			&entry->_message
-		);
+		) );
 	}
 };
 
