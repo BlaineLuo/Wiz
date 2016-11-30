@@ -6,7 +6,6 @@
 #define __WIZ_SYSTEM_FORWARD_H__
 
 #include "Wiz/String/StringT.h"
-//#include <ShlWApi.h>
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace System{

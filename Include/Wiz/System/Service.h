@@ -1,6 +1,6 @@
 ﻿// ============================================================
 // @Author: Blaine Luo
-// @Date: 2016/08
+// @Date: 2016/12
 // ============================================================
 #ifndef __WIZ_SYSTEM_SERVICE_H__
 #define __WIZ_SYSTEM_SERVICE_H__
@@ -11,16 +11,16 @@
 namespace Wiz{ namespace System{
 
 // ============================================================
-class Handle : public HandleT< SC_HANDLE, NULL >{
+class SvcObj : public HandleT< SC_HANDLE, NULL >{
 public:
-	inline ~Handle(){
+	inline ~SvcObj(){
 		if( this->isCreated() )
 			::CloseServiceHandle( *this );
 	}
 };
 
 // ============================================================
-class Manager : public Handle{
+class Manager : public SvcObj{
 public:
 	bool create(
 		DWORD desiredAccess = SC_MANAGER_ALL_ACCESS,
@@ -125,14 +125,14 @@ public:
 };
 
 // ============================================================
-struct ServiceConfig : public Structure< QUERY_SERVICE_CONFIG >{
-	typedef ServiceConfig This;
+struct SvcConfig : public Structure< QUERY_SERVICE_CONFIG >{
+	typedef SvcConfig This;
 
 	TCHAR* _svcName;
 	TCHAR* _password;
 	DWORD _desiredAccess;
 
-	inline ServiceConfig( 
+	inline SvcConfig( 
 		DWORD serviceType = SERVICE_NO_CHANGE,
 		DWORD startType = SERVICE_NO_CHANGE,
 		DWORD errorControl = SERVICE_NO_CHANGE
@@ -193,13 +193,13 @@ struct ServiceConfig : public Structure< QUERY_SERVICE_CONFIG >{
 };
 
 // ============================================================
-struct ServiceStatus : public Structure< SERVICE_STATUS >{};
+struct SvcStatus : public Structure< SERVICE_STATUS >{};
 
 // ============================================================
-class Service : public Handle{
+class Service : public SvcObj{
 
 public:
-	bool install( Manager& manager, ServiceConfig& config ){
+	bool install( Manager& manager, SvcConfig& config ){
 		Reconstruct( this );
 		if( !manager.isCreated() )
 			return false;
@@ -226,7 +226,7 @@ public:
 		return( 0 != ::DeleteService( *this ) );
 	}
 
-	bool open( Manager& manager, ServiceConfig& config ){
+	bool open( Manager& manager, SvcConfig& config ){
 		Reconstruct( this );
 		if( !manager.isCreated() )
 			return false;
@@ -246,7 +246,7 @@ public:
 		return ::QueryServiceStatus( *this, &status );
 	}
 
-	inline bool setConfig( ServiceConfig& config ){
+	inline bool setConfig( SvcConfig& config ){
 		return( 0 != ::ChangeServiceConfig(
 			*this,
 			config->dwServiceType,
@@ -263,7 +263,7 @@ public:
 	}
 
 	inline bool setStartType( DWORD startType ){
-		return this->setConfig( ServiceConfig().buildChange().setStartType( startType ) );
+		return this->setConfig( SvcConfig().buildChange().setStartType( startType ) );
 	}
 
 	inline bool control( DWORD ctrlCode = SERVICE_CONTROL_PAUSE ){
