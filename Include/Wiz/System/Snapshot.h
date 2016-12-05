@@ -48,11 +48,11 @@ public:
 
 // ============================================================
 template< typename T >
-struct FtorSnap{
+struct SnapFtor{
 	typedef T Entry;
 };
 
-struct FtorProcess : FtorSnap< PROCESSENTRY32 >{
+struct SnapProcessFtor : SnapFtor< PROCESSENTRY32 >{
 	inline static bool First( HANDLE snapObj, Entry& entry ){
 		return( 0 != ::Process32First( snapObj, &entry ) );
 	}
@@ -61,7 +61,7 @@ struct FtorProcess : FtorSnap< PROCESSENTRY32 >{
 	}
 };
 
-struct FtorThread : FtorSnap< THREADENTRY32 >{
+struct SnapThreadFtor : SnapFtor< THREADENTRY32 >{
 	inline static bool First( HANDLE snapObj, Entry& entry ){
 		return( 0 != ::Thread32First( snapObj, &entry ) );
 	}
@@ -70,7 +70,7 @@ struct FtorThread : FtorSnap< THREADENTRY32 >{
 	}
 };
 
-struct FtorModule : FtorSnap< MODULEENTRY32 >{
+struct SnapModuleFtor : SnapFtor< MODULEENTRY32 >{
 	inline static bool First( HANDLE h, Entry& entry ){
 		return( 0 != ::Module32First( h, &entry ) );
 	}
@@ -79,9 +79,9 @@ struct FtorModule : FtorSnap< MODULEENTRY32 >{
 	}
 };
 
-typedef SnapObj< FtorProcess, TH32CS_SNAPPROCESS > SnapshotProcess;
-typedef SnapObj< FtorThread, TH32CS_SNAPTHREAD > SnapshotThread;
-typedef SnapObj< FtorModule, TH32CS_SNAPMODULE > SnapshotModule;
+typedef SnapObj< SnapProcessFtor, TH32CS_SNAPPROCESS > SnapshotProcess;
+typedef SnapObj< SnapThreadFtor, TH32CS_SNAPTHREAD > SnapshotThread;
+typedef SnapObj< SnapModuleFtor, TH32CS_SNAPMODULE > SnapshotModule;
 
 }}
 // ===================================Namespace Tail==========================================
