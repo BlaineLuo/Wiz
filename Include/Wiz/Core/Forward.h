@@ -281,6 +281,12 @@ inline void MemoryReset( T& entry, unsigned char byte = 0 ){
 
 // ============================================================
 template< typename Var, typename Min, typename Max >
+inline bool IsOutOf( Var& var, Min min, Max max ){
+	return( var < (Var)min || var > (Var)max );
+}
+
+// ============================================================
+template< typename Var, typename Min, typename Max >
 inline Var& Arrange( Var& var, Min min, Max max ){
 	if( var < (Var)min )
 		var = (Var)min;
@@ -380,12 +386,10 @@ typedef StaticContainer< int, 0 > StructureEmpty;
 
 // ============================================================
 template< typename T >
-class StructureNative : public StaticContainer< T, 1 >{
+struct StructureNative : public StaticContainer< T, 1 >{
 
-protected:
 	Entry _entry;
 
-public:
 	operator Entry&(){
 		return _entry;
 	}
@@ -397,14 +401,16 @@ public:
 
 // ============================================================
 template< typename T >
-class Structure : public StructureNative< T >{
-
-public:
-	Structure(){
+struct Structure : public StructureNative< T >{
+	inline Structure(){
 		_entry = Entry();
 	}
 
-	Structure& operator =( Entry& entry ){
+	inline Entry* operator &(){
+		return (Entry*)this;
+	}
+
+	inline Structure& operator =( Entry& entry ){
 		_entry = entry;
 		return *this;
 	}
@@ -543,51 +549,52 @@ public:
 };
 
 // ============================================================
-template< typename T >
-struct PoolNode{
-	int _isAcquired;
-	T _entry;
-};
-
 template< typename T, unsigned int MaxCount >
-class Pool : public LimitedContainer< PoolNode< T >, MaxCount >{
+class Pool : public LimitedContainer< T, MaxCount >{
+
+protected:
+	Array< bool, _maxCount > _isAcquiredSet;
 
 public:
-	typedef T Entry;
-	typedef PoolNode< T > Node;
-
-	Entry* acquire(){
+	Entry* acquire( unsigned int* idx = NULL ){
 
 		if( this->isFull() )
 			return NULL;
 
 		for( unsigned int i = 0; i < _maxCount; i++ ){
-			Node& node = (*this)[i];
-			if( node._isAcquired )
+			bool& isAcquired = _isAcquiredSet[ i ];
+			if( isAcquired )
 				continue;
 
-			node._isAcquired = true;
+			if( NULL != idx )
+				*idx = i;
+
+			isAcquired = true;
 			this->incCurCount();
-			return &node._entry;
+			return &(*this)[ i ];
 		}
 		return NULL;
 	}
 
-	bool release( Entry* entry ){
+	bool release( unsigned int idx ){
 
-		if( this->isEmpty() || entry == NULL )
+		if( this->isEmpty() )
 			return false;
 
-		for( unsigned int i = 0; i < _maxCount; i++ ){
-			Node& node = (*this)[i];
-			if( &node._entry != entry )
-				continue;
+		bool& isAcquired = _isAcquiredSet[ idx ];
+		if( !isAcquired )
+			return false;
 
-			node._isAcquired = false;
-			this->decCurCount();
-			return true;
-		}
-		return false;
+		Reconstruct( &(*this)[ idx ] );
+		isAcquired = false;
+		this->decCurCount();
+		return true;
+	}
+
+	inline Entry* fetch( unsigned int idx ){
+		if( !_isAcquiredSet[ idx ] )
+			return NULL;
+		return &(*this)[ idx ];
 	}
 };
 

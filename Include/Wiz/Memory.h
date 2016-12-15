@@ -14,33 +14,80 @@ namespace Wiz{ namespace Memory{
 using namespace Wiz::Core;
 
 // ============================================================
-class Buffer : public HandleT< HGLOBAL, NULL >{
-
-	UINT _size;
-	UINT _seek;
+class Seeker{
 
 public:
-	inline Buffer(){
-		this->setSize( 0 );
-		this->setSeek( 0 );
+	typedef unsigned char* Pointer;
+
+protected:
+	Pointer _head;
+	Pointer _seek;
+	unsigned int _size;
+	unsigned int _offset;
+
+public:
+	inline Seeker( void* head = NULL, unsigned int size = 0 ){
+		this->create( head, size );
 	}
 
+	inline Seeker& create( void* head, unsigned int size ){
+		_head = (Pointer)head;
+		_size = size;
+		return this->clear().resetSeek();
+	}
+
+	inline Pointer getHead( unsigned int offset = 0 ){
+		return _head + offset;
+	}
+
+	inline Pointer getSeek( unsigned int offset = 0 ){
+		return _seek + offset;
+	}
+
+	inline unsigned int getSize(){
+		return _size;
+	}
+
+	inline unsigned int getOffset(){
+		return _offset;
+	}
+
+	inline unsigned int getRemain(){
+		int remain = this->getSize() - this->getOffset();
+		return Arrange( remain, 0, this->getSize() );
+	}
+
+	inline Seeker& moveSeek( int offset ){
+		return this->resetSeek( this->getOffset() + offset );
+	}
+
+	inline Seeker& resetSeek( int offset = 0 ){
+		_seek = this->getHead( _offset = Arrange( offset, 0, this->getSize() ) );
+		return *this;
+	}
+
+	inline Seeker& clear(){
+		if( NULL != this->getHead() )
+			::ZeroMemory( this->getHead(), this->getSize() );
+		return *this;
+	}
+};
+
+// ============================================================
+class Buffer : public HandleT< HGLOBAL, NULL >{
+
+public:
 	inline ~Buffer(){
 		if( this->isCreated() )
 			::GlobalFree( *this );
 	}
 
 	bool createBuffer( UINT size ){
-
 		Reconstruct( this );
-
 		this->setHandle( ::GlobalAlloc( GMEM_FIXED, size ) );
-
 		if( !this->isCreated() )
 			return false;
 
-		this->setSize( size );
-		this->setSeek( 0 );
 		this->clear();
 		return true;
 	}
@@ -73,41 +120,7 @@ public:
 	}
 
 	inline UINT getSize(){
-		return _size;
-	}
-
-	inline UINT getSeek(){
-		return _seek;
-	}
-
-	inline void* getSeekPos(){
-		return (void*)( (PCHAR)this->getHandle() + this->getSeek() );
-	}
-
-	inline UINT getRemain(){
-
-		if( this->getSize() < this->getSeek() )
-			return 0;
-
-		return( this->getSize() - this->getSeek() );
-	}
-
-	inline void setSize( UINT size ){
-		_size = size;
-	}
-
-	inline void setSeek( UINT seek ){
-		_seek = seek;
-		Arrange( _seek, 0, this->getSize() );
-	}
-
-	inline bool shiftSeek( UINT offset ){
-
-		if( this->getSeek() + offset > this->getSize() )
-			return false;
-
-		this->setSeek( this->getSeek() + offset );
-		return true;
+		return ::GlobalSize( *this );
 	}
 };
 

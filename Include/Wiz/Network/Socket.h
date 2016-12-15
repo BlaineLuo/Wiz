@@ -192,21 +192,20 @@ public:
 		return( SOCKET_ERROR != ::closesocket( *this ) );
 	}
 
-	inline bool accept( Socket& acceptSocket, SockAddr& remoteSockAddr ){
-		int sockAddrLen = sizeof(remoteSockAddr);
-		acceptSocket.setHandle( ::accept( *this, remoteSockAddr, &sockAddrLen ) );
-		return acceptSocket.isCreated();
+	inline Handle accept( SockAddr& remoteAddr ){
+		int size = sizeof(remoteAddr);
+		return ::accept( *this, remoteAddr, &size );
 	}
 
-	inline bool bind( SockAddr& sockAddr ){
+	inline bool bind( SockAddr& addr ){
 		// If Port not eq zero, then bind.
-		if( PortNumberMin == sockAddr.getPort() )
+		if( PortNumberMin == addr.getPort() )
 			return true;
-		return( SOCKET_ERROR != ::bind( *this, sockAddr, sizeof(sockAddr) ) );
+		return( SOCKET_ERROR != ::bind( *this, addr, sizeof(addr) ) );
 	}
 
-	inline bool connect( SockAddr& sockAddr ){
-		return( SOCKET_ERROR != ::connect( *this, sockAddr, sizeof(sockAddr) ) );
+	inline bool connect( SockAddr& addr ){
+		return( SOCKET_ERROR != ::connect( *this, addr, sizeof(addr) ) );
 	}
 
 	inline bool listen( unsigned int backlog = SOMAXCONN ){
@@ -217,9 +216,9 @@ public:
 		return ::recv( *this, (char*)buffer, len, 0 );
 	}
 
-	inline int recvUdp( void* buffer, unsigned int len, SockAddr& remoteSockAddr ){
-		int sockAddrLen = sizeof(remoteSockAddr);
-		return ::recvfrom( *this, (char*)buffer, len, 0, remoteSockAddr, &sockAddrLen );
+	inline int recvUdp( void* buffer, unsigned int len, SockAddr& remoteAddr ){
+		int size = sizeof(remoteAddr);
+		return ::recvfrom( *this, (char*)buffer, len, 0, remoteAddr, &size );
 	}
 
 	inline int sendTcp( void* buffer, unsigned int len ){
@@ -244,34 +243,22 @@ public:
 		return this->sendTcp( buffer, len );
 	}
 
-	inline int sendUdp( void* buffer, unsigned int len, SockAddr& remoteSockAddr ){
-		return ::sendto( *this, (char*)buffer, len, 0, remoteSockAddr, sizeof(remoteSockAddr) );
+	inline int sendUdp( void* buffer, unsigned int len, SockAddr& remoteAddr ){
+		return ::sendto( *this, (char*)buffer, len, 0, remoteAddr, sizeof(remoteAddr) );
 	}
 
 	inline bool shutdown( int shutdownType = SD_SEND ){
 		return( SOCKET_ERROR != ::shutdown( *this, shutdownType ) );
 	}
 
-	inline bool getLocalAddr( SockAddr& sockAddr ){
-		int size = sizeof(sockAddr);
-		return( SOCKET_ERROR != ::getsockname( *this, sockAddr, &size ) );
+	inline bool getLocalAddr( SockAddr& addr ){
+		int size = sizeof(addr);
+		return( SOCKET_ERROR != ::getsockname( *this, addr, &size ) );
 	}
 
-	inline SockAddr getLocalAddr(){
-		SockAddr sockAddr;
-		this->getLocalAddr( sockAddr );
-		return sockAddr;
-	}
-
-	inline bool getRemoteAddr( SockAddr& sockAddr ){
-		int size = sizeof(sockAddr);
-		return( SOCKET_ERROR != ::getpeername( *this, sockAddr, &size ) );
-	}
-
-	inline SockAddr getRemoteAddr(){
-		SockAddr sockAddr;
-		this->getRemoteAddr( sockAddr );
-		return sockAddr;
+	inline bool getRemoteAddr( SockAddr& addr ){
+		int size = sizeof(addr);
+		return( SOCKET_ERROR != ::getpeername( *this, addr, &size ) );
 	}
 
 	inline bool setNonBlockingMode( bool enable ){
@@ -382,20 +369,22 @@ public:
 	typedef Socket Parent;
 
 	inline SockAddr& getLocalAddr(){
-		return _addrLocal = this->Parent::getLocalAddr();
+		this->Parent::getLocalAddr( _addrLocal );
+		return _addrLocal;
 	}
 
 	inline SockAddr& getRemoteAddr(){
-		return _addrRemote = this->Parent::getRemoteAddr();
+		this->Parent::getRemoteAddr( _addrRemote );
+		return _addrRemote;
 	}
 
-	inline SocketEx& setLocalAddr( SockAddr& sockAddr ){
-		_addrLocal = sockAddr;
+	inline SocketEx& setLocalAddr( SockAddr& addr ){
+		_addrLocal = addr;
 		return *this;
 	}
 
-	inline SocketEx& setRemoteAddr( SockAddr& sockAddr ){
-		_addrRemote = sockAddr;
+	inline SocketEx& setRemoteAddr( SockAddr& addr ){
+		_addrRemote = addr;
 		return *this;
 	}
 
@@ -443,14 +432,6 @@ public:
 
 		return transferred;
 	}
-};
-
-// ============================================================
-struct Context{
-	Socket _socket;
-	Buffer _recvBuffer;
-	Buffer _sendBuffer;
-	Counter _aliveTime;
 };
 
 }}}

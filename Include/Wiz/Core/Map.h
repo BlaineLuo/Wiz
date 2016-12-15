@@ -140,26 +140,30 @@ public:
 	}
 
 	bool remove( Key key ){
-		Node* node = this->find( key );
+		unsigned int idx = 0;
+		Node* node = this->find( key, &idx );
 		if( node == NULL )
 			return false;
-		return this->release( node );
+		return this->release( idx );
 	}
 
-	Node* find( Key key ){
+	Node* find( Key key, unsigned int* idx = NULL ){
 
 		if( this->isEmpty() || (int)key == _nullKey )
 			return NULL;
 
-		for( UINT i = 0, findCount = 0; ( i < _maxCount ) & ( findCount < this->getCurCount() ); i++ ){
-			Pool::Node& poolNode = (*this)[i];
-			if( !poolNode._isAcquired )
+		for( unsigned int i = 0, count = 0; ( i < _maxCount ) && ( count < this->getCurCount() ); i++ ){
+
+			if( !_isAcquiredSet[i] )
 				continue;
 
-			findCount++;
-			Node& node = poolNode._entry;
-			if( node._key != key )
+			count++;
+			Node& node = (*this)[i];
+			if( key != node._key )
 				continue;
+
+			if( NULL != idx )
+				*idx = i;
 
 			return &node;
 		}
