@@ -170,6 +170,17 @@ template< typename T, unsigned int MaxCount >
 class StringArray : public Array< T, MaxCount >{
 
 public:
+	inline StringArray(){}
+
+	inline StringArray( T* format, ... ){
+		VPRINTF( *this, format );
+	}
+
+	inline StringArray& format( T* format, ... ){
+		VPRINTF( *this, format );
+		return *this;
+	}
+
 	template< typename S >
 	StringArray& operator <<( S* str ){
 		this->clear();
@@ -187,15 +198,36 @@ public:
 
 // ============================================================
 template< typename T = TCHAR >
-class MaxPath : public StringArray< T, MAX_PATH >{};
+class MaxPath : public StringArray< T, MAX_PATH >{
+public:
+	inline MaxPath(){}
+
+	inline MaxPath( T* format, ... ){
+		VPRINTF( *this, format );
+	}
+};
 
 // ============================================================
 template< typename T = TCHAR >
-class Text32 : public StringArray< T, 32 >{};
+class Text32 : public StringArray< T, 32 >{
+public:
+	inline Text32(){}
+
+	inline Text32( T* format, ... ){
+		VPRINTF( *this, format );
+	}
+};
 
 // ============================================================
 template< typename T = TCHAR >
-class Text64 : public StringArray< T, 64 >{};
+class Text64 : public StringArray< T, 64 >{
+public:
+	inline Text64(){}
+
+	inline Text64( T* format, ... ){
+		VPRINTF( *this, format );
+	}
+};
 
 // ============================================================
 template< typename T = TCHAR >

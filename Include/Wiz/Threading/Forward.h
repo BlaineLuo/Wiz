@@ -16,7 +16,7 @@ namespace Wiz{ namespace Threading{
 	template< typename T > class SafeListIterator;
 	template< typename T > class SafeList;
 	template< typename K, typename E > class SafeListMap;
-} }
+}}
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Threading{

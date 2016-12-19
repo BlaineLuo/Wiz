@@ -14,7 +14,7 @@ namespace Wiz{ namespace Core{
 	template< typename T > class ListNode;
 	template< typename T > class ListIterator;
 	template< typename T > class List;
-} }
+}}
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Core{
