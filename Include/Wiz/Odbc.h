@@ -500,7 +500,7 @@ public:
 		PVOID value,
 		DWORD valueSize,
 		WORD cType = SQL_C_DEFAULT,
-		PLONG valueLenOrInd = NULL
+		SQLLEN* valueLenOrInd = NULL
 	){
 		return SQL_SUCCEEDED( ::SQLBindCol( *this, idx, cType, value, valueSize, valueLenOrInd ) );
 	}
@@ -633,13 +633,13 @@ public:
 		PVOID value,
 		const DWORD valueSize,
 		const WORD cType = SQL_C_DEFAULT,
-		PLONG valueLenOrInd = NULL
+		SQLLEN* valueLenOrInd = NULL
 	){
 		return SQL_SUCCEEDED( ::SQLGetData( *this, idx, cType, value, valueSize, valueLenOrInd ) );
 	}
 
 	template< typename T >
-	inline bool getDataT( const WORD idx, T& value, const WORD cType = SQL_C_DEFAULT, PLONG valueLenOrInd = NULL ){
+	inline bool getDataT( const WORD idx, T& value, const WORD cType = SQL_C_DEFAULT, SQLLEN* valueLenOrInd = NULL ){
 		return this->getDataNative( idx, &value, sizeof(value), cType, valueLenOrInd );
 	}
 

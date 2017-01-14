@@ -413,11 +413,11 @@ public:
 	}
 
 	inline WNDPROC getWindowProcedure(){
-		return (WNDPROC)::GetWindowLong( *this, GWL_WNDPROC );
+		return (WNDPROC)::GetWindowLong( *this, GWLP_WNDPROC );
 	}
 
 	inline void setWindowProcedure( WNDPROC procedure ){
-		::SetWindowLong( *this, GWL_WNDPROC, (LONG)procedure );
+		::SetWindowLong( *this, GWLP_WNDPROC, (LONG)procedure );
 	}
 
 	inline void getText( TCHAR* text, UINT textLen ){
@@ -445,7 +445,7 @@ public:
 	}
 
 	inline void setCursor( HCURSOR cursor ){
-		::SetClassLong( *this, GCL_HCURSOR, (DWORD)cursor );
+		::SetClassLong( *this, GCLP_HCURSOR, (DWORD)cursor );
 	}
 
 	inline void setFocus(){
