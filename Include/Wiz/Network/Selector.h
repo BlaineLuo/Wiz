@@ -13,7 +13,8 @@ namespace Wiz{ namespace Network{ namespace Socket{
 
 // ============================================================
 struct Context{
-	unsigned int _index;
+	unsigned short _index;
+	unsigned short _isAutoRelease;
 	Socket _socket;
 	Seeker _seeker;
 	Counter _aliveTime;
@@ -62,7 +63,7 @@ protected:
 		if( !socketA->isCreated() )
 			return;
 
-		Socket* socketB = this->acquire();
+		Socket* socketB = this->acquire( true );
 		if( NULL == socketB ){
 			Reconstruct( socketA );
 			return;
@@ -76,7 +77,8 @@ protected:
 		entry._socket.shutdown( SD_SEND );
 		::Sleep(1); // Delay for receive remaining data.
 		//TODO: FD_CLOSE will not signal when Client Socket is not close.
-		this->release( entry._index );
+		if( 0 != entry._isAutoRelease )
+			this->release( entry._index );
 	}
 
 	virtual bool onRecvTcp( Entry& entry ){
@@ -107,7 +109,7 @@ public:
 		}
 	}
 
-	Socket* acquire(){
+	Socket* acquire( bool isAutoRelease = false ){
 		unsigned int idx = 0;
 		Entry* entry = this->Pool::acquire( &idx );
 		if( NULL == entry )
@@ -115,6 +117,7 @@ public:
 
 		Buffer& buffer = _receivingSet[ idx ];
 		entry->_index = idx;
+		entry->_isAutoRelease = isAutoRelease;
 		entry->_seeker.create( buffer, buffer.getSize() );
 		return &entry->_socket;
 	}
