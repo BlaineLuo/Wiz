@@ -17,21 +17,21 @@ using namespace Wiz::Memory;
 // @Brief: String Template for ASCII and Unicode.
 // ============================================================
 template< typename T = TCHAR >
-class StringT : protected Buffer{
+class String : protected Buffer{
 
 public:
 	using Buffer::clear;
 	using Buffer::getSize;
 	typedef T Character;
 
-	inline StringT(){
+	inline String(){
 	}
 
-	inline StringT( char* str ){
+	inline String( char* str ){
 		*this = str;
 	}
 
-	inline StringT( wchar_t* str ){
+	inline String( wchar_t* str ){
 		*this = str;
 	}
 
@@ -43,11 +43,11 @@ public:
 		return( 0 == Compare( *this, str ) );
 	}
 
-	inline StringT& operator =( StringT& str ){
+	inline String& operator =( String& str ){
 		return *this = (Character*)str;
 	}
 
-	StringT& operator =( char* str ){
+	String& operator =( char* str ){
 		if( NULL == str )
 			return *this;
 		if( this->isMultiByte() ){
@@ -60,7 +60,7 @@ public:
 		return *this;
 	}
 
-	StringT& operator =( wchar_t* str ){
+	String& operator =( wchar_t* str ){
 		if( NULL == str )
 			return *this;
 		if( this->isUnicode() ){
@@ -78,8 +78,8 @@ public:
 		return this->createBuffer( sizeof(Character) * ( strLen + 1 ) );
 	}
 
-	StringT& format( Character* format, ... ){
-		Text1024< Character > text;
+	String& format( Character* format, ... ){
+		StringArray< Character, 1024 > text;
 		VPRINTF( text, format );
 		*this = text;
 		return *this;
@@ -138,12 +138,16 @@ public:
 	}
 };
 
+typedef String< char > StringA;
+typedef String< wchar_t > StringW;
+typedef String< TCHAR > StringT;
+
 // ============================================================
 // @Brief: Format String of Last Error
 // ============================================================
-class ErrorString : public StringT<>{
+class ErrorString : public StringT{
 public:
-	using StringT::operator =;
+	using String::operator =;
 	inline ErrorString& getErrorString( DWORD errorCode = GetLastError() ){
 		PTCHAR formatMsg = NULL;
 		::FormatMessage(

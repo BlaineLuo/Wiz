@@ -47,12 +47,12 @@ public:
 		return time;
 	}
 
-	template< typename T >
-	T* operator >>( T* string ){
-		SystemTime time;
-		*this >> time;
-		time >> string;
-		return string;
+	inline char* operator >>( char* string ){
+		return SystemTime::CopyTo( *this >> SystemTime(), string );
+	}
+
+	inline wchar_t* operator >>( wchar_t* string ){
+		return SystemTime::CopyTo( *this >> SystemTime(), string );
 	}
 
 	inline Timestamp& getLocalTime(){
@@ -62,7 +62,7 @@ public:
 
 // ============================================================
 template< typename T = TCHAR >
-class ConnectionString : public StringT< T >{
+class ConnectionString : public Wiz::String::String< T >{
 
 public:
 	bool getValue( Character* key, Character* value ){
@@ -114,6 +114,10 @@ public:
 	}
 };
 
+typedef ConnectionString< char > ConnectionStringA;
+typedef ConnectionString< wchar_t > ConnectionStringW;
+typedef ConnectionString< TCHAR > ConnectionStringT;
+
 // ============================================================
 // @Brief: Diag Queue for handle error.
 // ============================================================
@@ -158,7 +162,7 @@ public:
 		if( NULL == entry )
 			return;
 
-		target.sendAllTargetString( Text1024<>(
+		target.sendAllTargetString( Text1024T(
 			_T("NativeCode = %d, State = %s, Message = %s\r\n"),
 			entry->_nativeCode,
 			&entry->_state,
@@ -281,7 +285,7 @@ public:
 		DWORD timeoutSecond = 5
 	){
 		return this->create(
-			ConnectionString<>().setValue( server, database, username, password ),
+			ConnectionStringT().setValue( server, database, username, password ),
 			timeoutSecond
 		);
 	}

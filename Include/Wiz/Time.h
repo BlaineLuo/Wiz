@@ -111,6 +111,22 @@ public:
 
 	template< typename T >
 	static inline T* CopyTo( const SYSTEMTIME& time, T* string ){
+		do{
+			if( 0 == time.wYear && 0 == time.wMonth && 0 == time.wDay ){
+				SystemTime::CopyTimeTo( time, string );
+				break;
+			}
+			if( 0 == time.wHour && 0 == time.wMinute && 0 == time.wSecond ){
+				SystemTime::CopyDateTo( time, string );
+				break;
+			}
+			SystemTime::CopyDateTimeTo( time, string );
+		}while(0);
+		return string;
+	}
+
+	template< typename T >
+	static inline T* CopyDateTimeTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
 			string,
 			CONST_TEXT( T*, "%04d/%02d/%02d %02d:%02d:%02d" ),
@@ -122,6 +138,7 @@ public:
 			time.wSecond
 		);
 	}
+
 	template< typename T >
 	static inline T* CopyDateTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
@@ -132,6 +149,7 @@ public:
 			time.wDay
 		);
 	}
+
 	template< typename T >
 	static inline T* CopyTimeTo( const SYSTEMTIME& time, T* string ){
 		return Printf(
@@ -152,27 +170,18 @@ public:
 
 	template< typename T >
 	SystemTime& operator <<( T string ){
-		StringT< wchar_t > str = string;
 		DATE date = 0;
-		if( ::VarDateFromStr( str, 0, 0, &date ) == S_OK )
+		if( ::VarDateFromStr( StringW( string ), 0, 0, &date ) == S_OK )
 			::VariantTimeToSystemTime( date, (Entry*)this );
 		return *this;
 	}
 
-	template< typename T >
-	T* operator >>( T* string ){
-		do{
-			if( 0 == (*this)->wYear && 0 == (*this)->wMonth && 0 == (*this)->wDay ){
-				SystemTime::CopyTimeTo( *this, string );
-				break;
-			}
-			if( 0 == (*this)->wHour && 0 == (*this)->wMinute && 0 == (*this)->wSecond ){
-				SystemTime::CopyDateTo( *this, string );
-				break;
-			}
-			SystemTime::CopyTo( *this, string );
-		}while(0);
-		return string;
+	char* operator >>( char* string ){
+		return SystemTime::CopyTo( *this, string );
+	}
+
+	wchar_t* operator >>( wchar_t* string ){
+		return SystemTime::CopyTo( *this, string );
 	}
 
 	inline __int64 operator -( SYSTEMTIME& time ){

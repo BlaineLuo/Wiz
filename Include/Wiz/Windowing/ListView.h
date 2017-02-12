@@ -238,26 +238,26 @@ public:
 	}
 
 	inline int getItemTextAsInt( int indexRow, int indexCol ){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getItemText( indexRow, indexCol, text, text._maxCount );
 		return ::_tstoi( text );
 	}
 
 	inline __int64 getItemTextAsInt64( int indexRow, int indexCol ){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getItemText( indexRow, indexCol, text, text._maxCount );
 		return ::_tstoi64( text );
 	}
 
 	inline long getItemTextAsLong( int indexRow, int indexCol ){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getItemText( indexRow, indexCol, text, text._maxCount );
 		return ::_tstol( text );
 	}
 
 #ifndef _WIN32_WCE
 	inline double getItemTextAsDouble( int indexRow, int indexCol ){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getItemText( indexRow, indexCol, text, text._maxCount );
 		return ::_tstof( text );
 	}

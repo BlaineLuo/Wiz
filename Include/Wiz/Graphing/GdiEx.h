@@ -85,7 +85,7 @@ public:
 		if( Gdiplus::GetImageEncoders( encoderNum, bufferSize, imageCodecInfo ) != Gdiplus::Ok )
 			return false;
 
-		StringT< wchar_t > strMimeType = mimeType;
+		StringW strMimeType = mimeType;
 		for( UINT i = 0; i < encoderNum; i++ ){
 
 			if( 0 != Compare( strMimeType, imageCodecInfo[i].MimeType ) )

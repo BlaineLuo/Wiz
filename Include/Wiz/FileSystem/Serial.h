@@ -26,7 +26,7 @@ public:
 
 		Reconstruct( this );
 
-		StringT<> fileName;
+		StringT fileName;
 		if( portNum < 10 )
 			fileName.format( _T("COM%d:"), portNum );
 		else

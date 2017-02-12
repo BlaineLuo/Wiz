@@ -139,7 +139,7 @@ inline int Convert( wchar_t* dst, unsigned int maxLen, char* src, unsigned int c
 
 // ============================================================
 template< typename T, typename U >
-T* ToFormalText( T* text, U cent ){
+T* ToFormalTextT( T* text, U cent ){
 	enum{ buf_size = 64 };
 	T buffer[ buf_size ] = {0};
 	unsigned int head = buf_size - 2;
@@ -165,6 +165,16 @@ T* ToFormalText( T* text, U cent ){
 	return Copy( text, &buffer[ head + 1 ] );
 }
 
+template< typename U >
+char* ToFormalText( char* text, U cent ){
+	return ToFormalTextT( text, cent );
+}
+
+template< typename U >
+wchar_t* ToFormalText( wchar_t* text, U cent ){
+	return ToFormalTextT( text, cent );
+}
+
 // ============================================================
 template< typename T, unsigned int MaxCount >
 class StringArray : public Array< T, MaxCount >{
@@ -172,17 +182,17 @@ class StringArray : public Array< T, MaxCount >{
 public:
 	inline StringArray(){}
 
-	inline StringArray( T* format, ... ){
+	inline StringArray( Entry* format, ... ){
 		VPRINTF( *this, format );
 	}
 
-	inline StringArray& format( T* format, ... ){
+	inline StringArray& format( Entry* format, ... ){
 		VPRINTF( *this, format );
 		return *this;
 	}
 
 	template< typename S >
-	StringArray& operator <<( S* str ){
+	StringArray& convert( S* str ){
 		this->clear();
 
 		if( NULL == str || _maxCount <= GetLength( str ) )
@@ -194,51 +204,35 @@ public:
 			Convert( *this, _maxCount, (GetInverseType< Entry* >::Type)str );
 		return *this;
 	}
-};
 
-// ============================================================
-template< typename T = TCHAR >
-class MaxPath : public StringArray< T, MAX_PATH >{
-public:
-	inline MaxPath(){}
+	inline StringArray& operator <<( char* str ){
+		return this->convert( str );
+	}
 
-	inline MaxPath( T* format, ... ){
-		VPRINTF( *this, format );
+	inline StringArray& operator <<( wchar_t* str ){
+		return this->convert( str );
 	}
 };
 
-// ============================================================
-template< typename T = TCHAR >
-class Text32 : public StringArray< T, 32 >{
-public:
-	inline Text32(){}
+typedef StringArray< char, 32 > Text32A;
+typedef StringArray< wchar_t, 32 > Text32W;
+typedef StringArray< TCHAR, 32 > Text32T;
 
-	inline Text32( T* format, ... ){
-		VPRINTF( *this, format );
-	}
-};
+typedef StringArray< char, 64 > Text64A;
+typedef StringArray< wchar_t, 64 > Text64W;
+typedef StringArray< TCHAR, 64 > Text64T;
 
-// ============================================================
-template< typename T = TCHAR >
-class Text64 : public StringArray< T, 64 >{
-public:
-	inline Text64(){}
+typedef StringArray< char, MAX_PATH > MaxPathA;
+typedef StringArray< wchar_t, MAX_PATH > MaxPathW;
+typedef StringArray< TCHAR, MAX_PATH > MaxPathT;
 
-	inline Text64( T* format, ... ){
-		VPRINTF( *this, format );
-	}
-};
+typedef StringArray< char, 1024 > Text1024A;
+typedef StringArray< wchar_t, 1024 > Text1024W;
+typedef StringArray< TCHAR, 1024 > Text1024T;
 
-// ============================================================
-template< typename T = TCHAR >
-class Text1024 : public StringArray< T, 1024 >{
-public:
-	inline Text1024(){}
-
-	inline Text1024( T* format, ... ){
-		VPRINTF( *this, format );
-	}
-};
+typedef StringArray< char, 4096 > Text4096A;
+typedef StringArray< wchar_t, 4096 > Text4096W;
+typedef StringArray< TCHAR, 4096 > Text4096T;
 
 }}
 // ===================================Namespace Tail==========================================

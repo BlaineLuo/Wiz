@@ -425,13 +425,13 @@ public:
 	}
 
 	inline int getTextAsInt(){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getText( text, text._maxCount );
 		return ::_tstoi( text );
 	}
 
 	inline long getTextAsLong(){
-		MaxPath<> text;
+		MaxPathT text;
 		this->getText( text, text._maxCount );
 		return ::_tstol( text );
 	}

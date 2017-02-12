@@ -89,7 +89,7 @@ protected:
 			return;
 
 		MSLLHOOKSTRUCT& hs = *(MSLLHOOKSTRUCT*)opt._lParam;
-		MaxPath<> text;
+		MaxPathT text;
 		::GetWindowText( ::GetForegroundWindow(), text, text._maxCount );
 	}
 };

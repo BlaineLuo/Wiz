@@ -15,7 +15,7 @@ namespace Wiz{ namespace Windowing{
 class OpenFileName : public Structure< OPENFILENAME >{
 
 public:
-	MaxPath<> _fileName;
+	MaxPathT _fileName;
 
 	inline OpenFileName(){
 		MemoryReset( *this );

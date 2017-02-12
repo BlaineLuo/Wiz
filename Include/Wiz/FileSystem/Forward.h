@@ -109,7 +109,7 @@ public:
 		if( NULL == translation )
 			return NULL;
 
-		StringT<> strSubBlock;
+		StringT strSubBlock;
 		strSubBlock.format(
 			_T("\\StringFileInfo\\%04x%04x\\%s"),
 			translation->_language,
@@ -129,18 +129,18 @@ class InstanceInfo{
 	DEFINE_SINGLE_EX( InstanceInfo, ;, ; );
 
 public:
-	StringT<> _exe;
-	StringT<> _name;
-	StringT<> _path;
+	StringT _exe;
+	StringT _name;
+	StringT _path;
 	VersionInfo _versionInfo;
 
 	bool create( TCHAR* name ){
-		MaxPath<> instancePath;
-		::GetModuleFileName( NULL, instancePath, instancePath._maxCount );
+		MaxPathT path;
+		::GetModuleFileName( NULL, path, path._maxCount );
 
 		_exe.format( _T("%s.exe"), name );
 		_name = name;
-		_path = instancePath;
+		_path = path;
 		return _versionInfo.create( _path );
 	}
 };
@@ -153,10 +153,10 @@ public:
 			::FindClose( *this );
 	}
 
-	bool findFile( TCHAR* searchExpression, WIN32_FIND_DATA& winFindData ){
+	bool findFile( TCHAR* searchExp, WIN32_FIND_DATA& winFindData ){
 
 		if( !this->isCreated() )
-			return this->findFirstFile( searchExpression, winFindData );
+			return this->findFirstFile( searchExp, winFindData );
 
 		if( !this->findNextFile( winFindData ) ){
 			Reconstruct( this );
@@ -165,14 +165,14 @@ public:
 		return true;
 	}
 
-	bool findFirstFile( TCHAR* searchExpression, WIN32_FIND_DATA& winFindData ){
+	bool findFirstFile( TCHAR* searchExp, WIN32_FIND_DATA& winFindData ){
 
-		if( NULL == searchExpression )
+		if( NULL == searchExp )
 			return false;
 
 		Reconstruct( this );
 
-		this->setHandle( ::FindFirstFile( searchExpression, &winFindData ) );
+		this->setHandle( ::FindFirstFile( searchExp, &winFindData ) );
 		return this->isCreated();
 	}
 
@@ -204,7 +204,7 @@ public:
 		return( 0 != ( fileAttributes & FILE_ATTRIBUTE_HIDDEN ) );
 	}
 
-	StringT<> _fileName;
+	StringT _fileName;
 
 	inline ~File(){
 		if( this->isCreated() )
@@ -289,8 +289,8 @@ public:
 	typedef std::list< TCHAR* > KeySet;
 
 protected:
-	MaxPath<> _fileName;
-	MaxPath<> _section;
+	MaxPathT _fileName;
+	MaxPathT _section;
 	KeySet _keySet;
 
 public:
@@ -302,10 +302,8 @@ public:
 	}
 
 	inline bool create( TCHAR* fileName, TCHAR* section = NULL ){
-		File file;
-		if( !file.create( fileName ) )
+		if( !File().create( fileName ) )
 			return false;
-
 		_fileName << fileName;
 		_section << section;
 		return true;
@@ -354,9 +352,9 @@ public:
 	}
 
 	inline void putLastError( TCHAR* fileName, DWORD lineNum, TCHAR* label, DWORD errorCode = ::GetLastError() ){
-		this->putString( Text1024<>(
+		this->putString( Text1024T(
 			_T("%s File=%s, Line=%d, Label=%s, ErrCode=%d\r\n"),
-			SystemTime().getLocalTime() >> &Text32<>()[0],
+			SystemTime().getLocalTime() >> Text32T(),
 			fileName,
 			lineNum,
 			label,
@@ -365,9 +363,9 @@ public:
 	}
 
 	inline void putFormatMessage( TCHAR* fileName, DWORD lineNum, TCHAR* label, DWORD errorCode = ::GetLastError() ){
-		this->putString( Text1024<>(
+		this->putString( Text1024T(
 			_T("%s File=%s, Line=%d, Label=%s, ErrCode=%d, ErrMsg=%s\r\n"),
-			SystemTime().getLocalTime() >> &Text32<>()[0],
+			SystemTime().getLocalTime() >> Text32T(),
 			fileName,
 			lineNum,
 			label,
@@ -381,14 +379,13 @@ public:
 class LoggerEx : public Logger{
 
 protected:
-	StringT<> _dirName;
-	StringT<> _prefix;
+	StringT _dirName;
+	StringT _prefix;
 	QWORD _expireMilliseconds;
 
 	bool create( SYSTEMTIME& time ){
 		( (SystemTime*)&time )->getLocalTime();
-		StringT<> filePath;
-		filePath.format(
+		return this->Logger::create( StringT().format(
 			_T("%s/%s%04d.%02d.%02d.%02d.%02d.%02d.log"),
 			_dirName.getString(),
 			_prefix.getString(),
@@ -398,8 +395,7 @@ protected:
 			time.wHour,
 			time.wMinute,
 			time.wSecond
-		);
-		return this->Logger::create( filePath );
+		) );
 	}
 
 public:
@@ -413,14 +409,14 @@ public:
 	}
 
 	void deleteExpired(){
-		StringT<> searchExpression;
-		searchExpression.format( _T("%s/%s*"), _dirName.getString(), _prefix.getString() );
+		StringT searchExp;
+		searchExp.format( _T("%s/%s*"), _dirName.getString(), _prefix.getString() );
 
 		SystemTime timeNow;
 		timeNow.getSystemTime();
 		Directory directory;
 		WIN32_FIND_DATA findData = {0};
-		for( ; directory.findFile( searchExpression, findData ); ){
+		for( ; directory.findFile( searchExp, findData ); ){
 
 			if( File::isDirectory( findData.dwFileAttributes ) )
 				continue;
@@ -428,9 +424,7 @@ public:
 			if( timeNow.toMilliseconds() - FileTime::ToMilliseconds( findData.ftCreationTime ) < _expireMilliseconds )
 				continue;
 
-			StringT<> fullName;
-			fullName.format( _T("%s/%s"), _dirName.getString(), &findData.cFileName );
-			::DeleteFile( fullName );
+			::DeleteFile( StringT().format( _T("%s/%s"), _dirName.getString(), &findData.cFileName ) );
 		}
 		this->create( timeNow );
 	}

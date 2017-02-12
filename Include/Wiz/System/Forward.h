@@ -30,11 +30,11 @@ using namespace Wiz::String;
 // ============================================================
 static void* GetProcAddressEx( PTCHAR moduleName, PTCHAR procName, bool isUnicode ){
 
-	StringT<> procNameFirst;
+	StringT procNameFirst;
 #ifndef _WIN32_WCE
-	StringT< char > procNameSecond;
+	StringA procNameSecond;
 #else
-	StringT< wchar_t > procNameSecond;
+	StringW procNameSecond;
 #endif
 
 	if( isUnicode )

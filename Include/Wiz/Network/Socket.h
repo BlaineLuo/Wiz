@@ -40,7 +40,7 @@ public:
 
 	template< typename T >
 	inline InetAddr& operator <<( T* ip ){
-		(*this)->S_un.S_addr = ::inet_addr( Text32< char >() << ip );
+		(*this)->S_un.S_addr = ::inet_addr( Text32A() << ip );
 		return *this;
 	}
 
