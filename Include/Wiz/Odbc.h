@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // @Brief: Win32 ODBC Classes
 // @Author: Blaine Luo
 // @Date: 2016/08
@@ -155,19 +155,6 @@ public:
 			this->Parent::push( entry );
 		}
 		return true;
-	}
-
-	void sendLastError( Window& target ){
-		DiagEntry* entry = this->peek( this->getCurCount() - 1 );
-		if( NULL == entry )
-			return;
-
-		target.sendAllTargetString( Text1024T(
-			_T("NativeCode = %d, State = %s, Message = %s\r\n"),
-			entry->_nativeCode,
-			&entry->_state,
-			&entry->_message
-		) );
 	}
 };
 
