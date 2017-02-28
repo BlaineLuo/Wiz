@@ -6,7 +6,7 @@
 #ifndef __WIZ_NETWORK_INTERNET_H__
 #define __WIZ_NETWORK_INTERNET_H__
 
-#include "Wiz/String/StringT.h"
+#include "Wiz/String/String.h"
 #include <WinINet.h>
 #pragma comment( lib, "WinINet" )
 

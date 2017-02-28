@@ -1,11 +1,11 @@
 // ============================================================
 // @Author: Blaine Luo
-// @Date: 2016/08
+// @Date: 2017/03
 // ============================================================
 #ifndef __WIZ_CORE_HANDLE_H__
 #define __WIZ_CORE_HANDLE_H__
 
-#include "Wiz/Core/Forward.h"
+#include "Wiz/Core/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Core{
@@ -18,22 +18,25 @@ class HandleT{
 
 public:
 	typedef T Handle;
-	enum{ _nullHandle = (int)NullHandle };
 
 private:
 	Handle _handle;
 
 public:
-	static Handle GetNullHandle(){
-		return (Handle)_nullHandle;
+	static inline Handle GetNullHandle(){
+		return NullHandle;
 	}
 
-	HandleT(){
-		this->setNullHandle();
+	inline HandleT(){
+		this->setHandle( this->GetNullHandle() );
 	}
 
-	~HandleT(){
-		this->setNullHandle();
+	inline ~HandleT(){
+		this->setHandle( this->GetNullHandle() );
+	}
+
+	inline operator Handle&(){
+		return this->getHandle();
 	}
 
 	inline Handle& getHandle(){
@@ -44,25 +47,17 @@ public:
 		return &_handle;
 	}
 
-	inline HandleT& setHandle( Handle handle ){
-		_handle = handle;
+	inline HandleT& setHandle( Handle v ){
+		_handle = v;
 		return *this;
 	}
 
-	inline HandleT& setNullHandle(){
-		return this->setHandle( this->GetNullHandle() );
-	}
-
 	inline bool isCreated(){
-		return( this->getHandle() != this->GetNullHandle() );
+		return( *this != this->GetNullHandle() );
 	}
 
-	inline BOOL closeHandle(){
-		return ::CloseHandle( this->getHandle() );
-	}
-
-	operator Handle&(){
-		return this->getHandle();
+	inline bool closeHandle(){
+		return( 0 != ::CloseHandle( *this ) );
 	}
 };
 
@@ -75,25 +70,21 @@ template< typename T >
 class HandleP : public HandleT< T*, NULL >{
 
 public:
-	HandleP(){
-		this->HandleT::HandleT();
+	inline HandleP( Handle v = HandleP::GetNullHandle() ){
+		this->setHandle( v );
 	}
 
-	HandleP( T* type ){
-		this->setHandle( type );
-	}
-
-	~HandleP(){
+	inline ~HandleP(){
 		if( this->isCreated() )
 			delete this->getHandle();
 	}
 
-	HandleP& operator =( T* type ){
-		this->setHandle( type );
+	inline HandleP& operator =( Handle v ){
+		this->setHandle( v );
 		return *this;
 	}
 
-	T* operator ->(){
+	inline Handle operator ->(){
 		return this->getHandle();
 	}
 };

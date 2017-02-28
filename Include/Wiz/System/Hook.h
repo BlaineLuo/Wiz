@@ -5,7 +5,7 @@
 #ifndef __WIZ_SYSTEM_HOOK_H__
 #define __WIZ_SYSTEM_HOOK_H__
 
-#include "Wiz/System/Forward.h"
+#include "Wiz/System/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace System{

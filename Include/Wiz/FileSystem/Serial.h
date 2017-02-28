@@ -5,7 +5,7 @@
 #ifndef __WIZ_FILESYSTEM_SERIAL_H__
 #define __WIZ_FILESYSTEM_SERIAL_H__
 
-#include "Wiz/FileSystem/Forward.h"
+#include "Wiz/FileSystem/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace FileSystem{

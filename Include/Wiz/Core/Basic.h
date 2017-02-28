@@ -2,8 +2,8 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_CORE_FORWARD_H__
-#define __WIZ_CORE_FORWARD_H__
+#ifndef __WIZ_CORE_BASIC_H__
+#define __WIZ_CORE_BASIC_H__
 
 #include <New>
 #include <List>
@@ -134,6 +134,17 @@ struct RemoveConst< const T* >{
 };
 
 // ============================================================
+template< typename T, typename U >
+struct IsSameType{
+	enum{ _value = false };
+};
+
+template< typename T >
+struct IsSameType< T, T >{
+	enum{ _value = true };
+};
+
+// ============================================================
 template< typename T >
 struct IsChar{
 	enum{ _value = false };
@@ -176,17 +187,6 @@ struct IsWideChar< wchar_t* >{
 #endif
 
 // ============================================================
-template< typename T, typename U >
-struct IsSameType{
-	enum{ _value = false };
-};
-
-template< typename T >
-struct IsSameType< T, T >{
-	enum{ _value = true };
-};
-
-// ============================================================
 template< typename T >
 struct GetInverseType;
 
@@ -208,6 +208,18 @@ struct GetInverseType< wchar_t >{
 template<>
 struct GetInverseType< wchar_t* >{
 	typedef char* Type;
+};
+
+// ============================================================
+template< typename T >
+struct IsSigned{
+	enum{ _value = T(-1) < 0 };
+};
+
+// ============================================================
+template< typename T >
+struct GetTypeMax{
+	static const T _value = (T)( ~T(0) ^ ( (T)( IsSigned< T >::_value ? 1 : 0 ) << ( sizeof(T) * 8 - 1 ) ) );
 };
 
 // ============================================================
@@ -247,6 +259,24 @@ template<>
 struct GetHalvedType< unsigned __int64 >{
 	typedef unsigned int Type;
 };
+
+// ============================================================
+typedef signed __int8 SInt8;
+typedef unsigned __int8 UInt8;
+typedef signed __int16 SInt16;
+typedef unsigned __int16 UInt16;
+typedef signed __int32 SInt32;
+typedef unsigned __int32 UInt32;
+typedef signed __int64 SInt64;
+typedef unsigned __int64 UInt64;
+
+#ifndef _WIN64
+	typedef SInt32 SIntStd;
+	typedef UInt32 UIntStd;
+#else
+	typedef SInt64 SIntStd;
+	typedef UInt64 UIntStd;
+#endif
 
 // ============================================================
 template< typename T >
@@ -417,84 +447,6 @@ struct Structure : public StructureNative< T >{
 };
 
 // ============================================================
-template< typename T, unsigned int MaxCount >
-class ArrayNative : public StaticContainer< T, MaxCount >{
-
-protected:
-	Entry _entries[ _maxCount ];
-
-public:
-	void insert( unsigned int index, Entry& entry ){
-		(*this)[index] = entry;
-	}
-
-	void remove( unsigned int index ){
-		MemoryReset( (*this)[index] );
-	}
-
-	void clear(){
-		MemoryReset( _entries );
-	}
-
-	//TODO: Fix conflict with operator[]
-	operator Entry*(){
-		return &(*this)[0];
-	}
-
-	template< typename Index >
-	Entry& operator []( Index index ){
-		return _entries[ (unsigned int)index % _maxCount ];
-	}
-};
-
-// ============================================================
-template< typename T, unsigned int MaxCount >
-class ArrayIterator{
-
-public:
-	typedef T Entry;
-	enum{ _maxCount = MaxCount };
-	typedef ArrayNative< Entry, _maxCount > Array;
-
-protected:
-	Array& _array;
-	typename Array::Indexer _indexer;
-
-public:
-	ArrayIterator( Array& arrayN, unsigned int index = 0 ) :
-		_array( arrayN )
-	{
-		_indexer = index;
-	}
-
-	inline operator Entry&(){
-		return _array[ _indexer ];
-	}
-
-	inline ArrayIterator& operator ++(){
-		++_indexer;
-		return *this;
-	}
-
-	inline ArrayIterator& operator --(){
-		--_indexer;
-		return *this;
-	}
-};
-
-// ============================================================
-template< typename T, unsigned int MaxCount >
-class Array : public ArrayNative< T, MaxCount >{
-
-public:
-	typedef ArrayIterator< Entry, _maxCount > Iterator;
-
-	Array(){
-		this->clear();
-	}
-};
-
-// ============================================================
 class DynamicContainer{
 
 protected:
@@ -529,72 +481,6 @@ public:
 
 		_curCount--;
 		return true;
-	}
-};
-
-// ============================================================
-template< typename T, unsigned int MaxCount >
-class LimitedContainer : public DynamicContainer, public Array< T, MaxCount >{
-
-public:
-	bool isFull(){
-		return( this->getCurCount() >= _maxCount );
-	}
-
-	bool incCurCount(){
-		if( this->isFull() )
-			return false;
-		return this->DynamicContainer::incCurCount();
-	}
-};
-
-// ============================================================
-template< typename T, unsigned int MaxCount >
-class Pool : public LimitedContainer< T, MaxCount >{
-
-protected:
-	Array< bool, _maxCount > _isAcquiredSet;
-
-public:
-	Entry* acquire( unsigned int* idx = NULL ){
-
-		if( this->isFull() )
-			return NULL;
-
-		for( unsigned int i = 0; i < _maxCount; i++ ){
-			bool& isAcquired = _isAcquiredSet[ i ];
-			if( isAcquired )
-				continue;
-
-			if( NULL != idx )
-				*idx = i;
-
-			isAcquired = true;
-			this->incCurCount();
-			return &(*this)[ i ];
-		}
-		return NULL;
-	}
-
-	bool release( unsigned int idx ){
-
-		if( this->isEmpty() )
-			return false;
-
-		bool& isAcquired = _isAcquiredSet[ idx ];
-		if( !isAcquired )
-			return false;
-
-		Reconstruct( &(*this)[ idx ] );
-		isAcquired = false;
-		this->decCurCount();
-		return true;
-	}
-
-	inline Entry* fetch( unsigned int idx ){
-		if( !_isAcquiredSet[ idx ] )
-			return NULL;
-		return &(*this)[ idx ];
 	}
 };
 

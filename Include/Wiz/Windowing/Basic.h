@@ -2,10 +2,10 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_WINDOWING_FORWARD_H__
-#define __WIZ_WINDOWING_FORWARD_H__
+#ifndef __WIZ_WINDOWING_BASIC_H__
+#define __WIZ_WINDOWING_BASIC_H__
 
-#include "Wiz/Core/Backward.h"
+#include "Wiz/Core/All.h"
 #include "Wiz/Time.h"
 #include "Wiz/WmDef.h"
 #include <WindowsX.h>

@@ -2,10 +2,10 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_STRING_FORWARD_H__
-#define __WIZ_STRING_FORWARD_H__
+#ifndef __WIZ_STRING_BASIC_H__
+#define __WIZ_STRING_BASIC_H__
 
-#include "Wiz/Core/Forward.h"
+#include "Wiz/Core/Array.h"
 #include <TChar.h>
 #include <StrSafe.h>
 #include <StdArg.h>

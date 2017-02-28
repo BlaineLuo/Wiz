@@ -5,7 +5,7 @@
 #ifndef __WIZ_CORE_LIST_H__
 #define __WIZ_CORE_LIST_H__
 
-#include "Wiz/Core/Forward.h"
+#include "Wiz/Core/Basic.h"
 
 // ============================================================
 // Forward Declaration

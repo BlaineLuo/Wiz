@@ -5,7 +5,7 @@
 #ifndef __WIZ_SYSTEM_SNAPSHOT_H__
 #define __WIZ_SYSTEM_SNAPSHOT_H__
 
-#include "Wiz/System/Forward.h"
+#include "Wiz/System/Basic.h"
 #include <TLHelp32.h>
 
 // ===================================Namespace Head==========================================

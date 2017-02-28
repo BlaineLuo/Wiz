@@ -5,7 +5,7 @@
 #ifndef __WIZ_CORE_MAP_H__
 #define __WIZ_CORE_MAP_H__
 
-#include "Wiz/Core/Forward.h"
+#include "Wiz/Core/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Core{

@@ -6,7 +6,7 @@
 #ifndef __WIZ_GRAPHING_GDI_H__
 #define __WIZ_GRAPHING_GDI_H__
 
-#include "Wiz/System/Forward.h"
+#include "Wiz/System/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Graphing{ namespace Gdi{

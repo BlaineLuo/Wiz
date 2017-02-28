@@ -2,10 +2,10 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_SYSTEM_FORWARD_H__
-#define __WIZ_SYSTEM_FORWARD_H__
+#ifndef __WIZ_SYSTEM_BASIC_H__
+#define __WIZ_SYSTEM_BASIC_H__
 
-#include "Wiz/String/StringT.h"
+#include "Wiz/String/String.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace System{

@@ -8,8 +8,8 @@
 
 #ifndef _WIN32_WCE
 
-#include "Wiz/Threading/Forward.h"
-#include "Wiz/Windowing/Backward.h"
+#include "Wiz/Threading/Basic.h"
+#include "Wiz/Windowing/All.h"
 #include <Sql.h>
 #include <SqlExt.h>
 #pragma comment( lib, "Odbc32.lib" )

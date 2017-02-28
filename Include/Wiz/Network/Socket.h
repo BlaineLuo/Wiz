@@ -7,8 +7,8 @@
 #define __WIZ_NETWORK_SOCKET_H__
 
 #include "Wiz/Network/WinSockHeader.h"
-#include "Wiz/Threading/Forward.h"
-#include "Wiz/Windowing/Backward.h"
+#include "Wiz/Threading/Basic.h"
+#include "Wiz/Windowing/All.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Network{ namespace Socket{

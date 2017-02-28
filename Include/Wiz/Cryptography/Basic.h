@@ -5,7 +5,7 @@
 #ifndef __WIZ_CRYPTOGRAPHY_BASIC_H__
 #define __WIZ_CRYPTOGRAPHY_BASIC_H__
 
-#include "Wiz/String/StringT.h"
+#include "Wiz/String/String.h"
 #include <WinCrypt.h>
 #pragma comment( lib, "Crypt32.lib" )
 

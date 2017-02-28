@@ -2,10 +2,11 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_COM_BACKWARD_H__
-#define __WIZ_COM_BACKWARD_H__
+#ifndef __WIZ_WINDOWING_ALL_H__
+#define __WIZ_WINDOWING_ALL_H__
 
-#include "Wiz/Com/Imaging.h"
-#include "Wiz/Com/Wmi.h"
+#include "Wiz/Windowing/Panel.h"
+#include "Wiz/Windowing/CommonDialog.h"
+#include "Wiz/Windowing/ListView.h"
 
 #endif

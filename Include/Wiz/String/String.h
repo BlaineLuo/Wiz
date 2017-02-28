@@ -5,7 +5,7 @@
 #ifndef __WIZ_STRING_STRINGT_H__
 #define __WIZ_STRING_STRINGT_H__
 
-#include "Wiz/String/Forward.h"
+#include "Wiz/String/Basic.h"
 #include "Wiz/Memory.h"
 
 // ===================================Namespace Head==========================================
@@ -90,7 +90,7 @@ public:
 	}
 
 	inline Character* getString(){
-		return (Character*)( this->getHandle() );
+		return (Character*)this->getHandle();
 	}
 
 	inline bool isMultiByte(){

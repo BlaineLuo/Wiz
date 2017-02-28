@@ -6,7 +6,7 @@
 #ifndef __WIZ_TIME_H__
 #define __WIZ_TIME_H__
 
-#include "Wiz/String/StringT.h"
+#include "Wiz/String/String.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Time{
@@ -17,9 +17,9 @@ enum{ SecondToMillisecond = 1000 };
 enum{ MinuteToSecond = 60 };
 enum{ HourToMinute = 60 };
 enum{ DayToHour = 24 };
-enum : QWORD{ MinuteToMillisecond = MinuteToSecond * SecondToMillisecond };
-enum : QWORD{ HourToMillisecond = HourToMinute * MinuteToMillisecond };
-enum : QWORD{ DayToMillisecond = DayToHour * HourToMillisecond };
+static const QWORD MinuteToMillisecond = MinuteToSecond * SecondToMillisecond;
+static const QWORD HourToMillisecond = HourToMinute * MinuteToMillisecond;
+static const QWORD DayToMillisecond = DayToHour * HourToMillisecond;
 
 // ============================================================
 class Frequency : public Structure< LARGE_INTEGER >{

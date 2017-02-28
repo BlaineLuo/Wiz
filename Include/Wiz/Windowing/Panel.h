@@ -5,7 +5,7 @@
 #ifndef __WIZ_WINDOWING_PANEL_H__
 #define __WIZ_WINDOWING_PANEL_H__
 
-#include "Wiz/Windowing/Forward.h"
+#include "Wiz/Windowing/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{
@@ -330,7 +330,7 @@ public:
 		_notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		_notifyIconData.uID = iconId;
 		_notifyIconData.hIcon = ::LoadIcon( ::GetModuleHandle( NULL ), MAKEINTRESOURCE( iconId ) );
-		_notifyIconData.hWnd = this->getHandle();
+		_notifyIconData.hWnd = *this;
 		_notifyIconData.uCallbackMessage = WM_TRAY;
 		Copy( _notifyIconData.szTip, tip );
 

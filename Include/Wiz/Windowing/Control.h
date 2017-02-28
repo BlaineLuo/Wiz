@@ -5,7 +5,7 @@
 #ifndef __WIZ_WINDOWING_CONTROL_H__
 #define __WIZ_WINDOWING_CONTROL_H__
 
-#include "Wiz/Windowing/Forward.h"
+#include "Wiz/Windowing/Basic.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Windowing{

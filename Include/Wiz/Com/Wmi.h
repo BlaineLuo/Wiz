@@ -7,7 +7,7 @@
 
 #ifndef _WIN32_WCE
 
-#include "Wiz/Com/Forward.h"
+#include "Wiz/Com/Basic.h"
 #include <WbemIdl.h>
 #pragma comment( lib, "WbemUuid.lib" )
 

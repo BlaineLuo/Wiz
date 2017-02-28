@@ -5,10 +5,12 @@
 #ifndef __WIZ_CORE_QUEUE_H__
 #define __WIZ_CORE_QUEUE_H__
 
-#include "Wiz/Core/Forward.h"
+#include "Wiz/Core/Array.h"
 
 // ===================================Namespace Head==========================================
 namespace Wiz{ namespace Core{
+
+#pragma pack( push, 1 )
 
 // ============================================================
 template< typename T, unsigned int MaxCount >
@@ -149,6 +151,8 @@ public:
 		return this->Parent::pop();
 	}
 };
+
+#pragma pack( pop )
 
 }}
 // ===================================Namespace Tail==========================================

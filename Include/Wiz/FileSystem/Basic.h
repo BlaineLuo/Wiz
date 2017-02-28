@@ -2,8 +2,8 @@
 // @Author: Blaine Luo
 // @Date: 2016/08
 // ============================================================
-#ifndef __WIZ_FILESYSTEM_FORWARD_H__
-#define __WIZ_FILESYSTEM_FORWARD_H__
+#ifndef __WIZ_FILESYSTEM_BASIC_H__
+#define __WIZ_FILESYSTEM_BASIC_H__
 
 #include "Wiz/Time.h"
 
