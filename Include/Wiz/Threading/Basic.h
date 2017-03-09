@@ -38,7 +38,7 @@ public:
 		return( ERROR_ACCESS_DENIED != lastError && ERROR_ALREADY_EXISTS != lastError );
 	}
 
-	virtual bool signal( DWORD count = 1, PDWORD prevCount = NULL ) = 0;
+	virtual bool signal() = 0;
 };
 
 // ============================================================
@@ -46,7 +46,7 @@ public:
 // ============================================================
 class Event : public SyncObject{
 public:
-	BOOL create( PTCHAR objName = NULL, BOOL isManualReset = false, BOOL isInitialState = false ){
+	bool create( PTCHAR objName = NULL, BOOL isManualReset = false, BOOL isInitialState = false ){
 		Reconstruct( this );
 
 		this->setHandle( ::CreateEvent( NULL, isManualReset, isInitialState, objName ) );
@@ -56,7 +56,7 @@ public:
 		return this->isCreated();
 	}
 
-	virtual bool signal( DWORD count = 1, PDWORD prevCount = NULL ){
+	virtual bool signal(){
 		return( 0 != ::SetEvent( *this ) );
 	}
 };
@@ -66,7 +66,7 @@ public:
 // ============================================================
 class Mutex : public SyncObject{
 public:
-	BOOL create( PTCHAR objName = NULL, BOOL isInitialOwner = false ){
+	bool create( PTCHAR objName = NULL, BOOL isInitialOwner = false ){
 		Reconstruct( this );
 
 		this->setHandle( ::CreateMutex( NULL, isInitialOwner, objName ) );
@@ -76,7 +76,7 @@ public:
 		return this->isCreated();
 	}
 
-	virtual bool signal( DWORD count = 1, PDWORD prevCount = NULL ){
+	virtual bool signal(){
 		return( 0 != ::ReleaseMutex( *this ) );
 	}
 };
@@ -86,7 +86,7 @@ public:
 // ============================================================
 class Semaphore : public SyncObject{
 public:
-	BOOL create( PTCHAR objName = NULL, DWORD maxCount = 1, DWORD iniCount = 0 ){
+	bool create( PTCHAR objName = NULL, DWORD maxCount = 1, DWORD iniCount = 0 ){
 		Reconstruct( this );
 
 		this->setHandle( ::CreateSemaphore( NULL, iniCount, maxCount, objName ) );
@@ -97,8 +97,8 @@ public:
 	}
 
 	// Note: If ( Count + Current Count ) > MaxCount of Semaphore, Signal will fial.
-	virtual bool signal( DWORD count = 1, PDWORD prevCount = NULL ){
-		return( 0 != ::ReleaseSemaphore( *this, count, (LPLONG)prevCount ) );
+	virtual bool signal(){
+		return( 0 != ::ReleaseSemaphore( *this, 1, NULL ) );
 	}
 };
 
@@ -108,23 +108,23 @@ public:
 class CriticalSection : public Structure< CRITICAL_SECTION >{
 public:
 	inline CriticalSection(){
-		::InitializeCriticalSection( (Entry*)this );
+		::InitializeCriticalSection( &(*this) );
 	}
 
 	inline ~CriticalSection(){
-		::DeleteCriticalSection( (Entry*)this );
+		::DeleteCriticalSection( &(*this) );
 	}
 
-	inline BOOL tryEnter(){
-		return ::TryEnterCriticalSection( (Entry*)this );
+	inline bool tryEnter(){
+		return( 0 != ::TryEnterCriticalSection( &(*this) ) );
 	}
 
 	inline void enter(){
-		::EnterCriticalSection( (Entry*)this );
+		::EnterCriticalSection( &(*this) );
 	}
 
 	inline void leave(){
-		::LeaveCriticalSection( (Entry*)this );
+		::LeaveCriticalSection( &(*this) );
 	}
 };
 
@@ -192,7 +192,7 @@ public:
 		return this->isCreated();
 	}
 
-	virtual bool signal( DWORD count = 1, PDWORD prevCount = NULL ){
+	virtual bool signal(){
 		return false;
 	}
 };

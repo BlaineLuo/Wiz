@@ -11,7 +11,7 @@
 namespace Wiz{ namespace Windowing{
 
 // ============================================================
-enum{ MessageMapNull = 0xFFFFFFFF };
+static const UIntStd MessageMapNull = GetTypeMax< UIntStd >::_value;
 
 // Prototype of Method Pointer
 typedef DWORD(__cdecl Window::*PtrHandler)( ... );
@@ -19,15 +19,15 @@ typedef DWORD(__cdecl Window::*PtrHandler)( ... );
 struct HandlerCtx{
 	PtrHandler _handler;
 	UINT _message;
-	UINT _id;
+	UIntStd _id;
 	HWND _hwnd;
-	UINT _code;
+	UIntStd _code;
 };
 
 template< unsigned int MaxCount >
 struct HandlerSetT : public LimitedContainer< HandlerCtx, MaxCount >{
 
-	Entry* find( UINT message, UINT id, HWND hwnd, UINT code ){
+	Entry* find( UINT message, UIntStd id, HWND hwnd, UIntStd code ){
 		for( int i = 0; i < _maxCount; i++ ){
 			Entry& entry = (*this)[i];
 			if( NULL == entry._handler )
@@ -72,34 +72,34 @@ protected:
 	HandlerSet _handlerSet;
 
 	template< typename T >
-	inline bool onMessage( T handler, UINT message, UINT id = MessageMapNull, HWND hwnd = NULL, UINT code = MessageMapNull ){
+	inline bool onMessage( T handler, UINT message, UIntStd id = MessageMapNull, HWND hwnd = NULL, UIntStd code = MessageMapNull ){
 		HandlerCtx entry = { (PtrHandler)handler, message, id, hwnd, code };
 		return _handlerSet.insert( entry );
 	}
 
 	template< typename T >
-	inline bool onCommand( T handler, HWND hwnd, UINT code = MessageMapNull ){
+	inline bool onCommand( T handler, HWND hwnd, UIntStd code = MessageMapNull ){
 		return this->onMessage( handler, WM_COMMAND, MessageMapNull, hwnd, code );
 	}
 
 	template< typename T >
-	inline bool onNotify( T handler, HWND hwnd, UINT code = MessageMapNull ){
+	inline bool onNotify( T handler, HWND hwnd, UIntStd code = MessageMapNull ){
 		return this->onMessage( handler, WM_NOTIFY, MessageMapNull, hwnd, code );
 	}
 
 	template< typename T >
-	inline bool onTimer( T handler, UINT id ){
+	inline bool onTimer( T handler, UIntStd id ){
 		return this->onMessage( handler, WM_TIMER, id );
 	}
 
 	template< typename T >
-	inline bool onSize( T handler, UINT id ){
+	inline bool onSize( T handler, UIntStd id ){
 		return this->onMessage( handler, WM_SIZE, id );
 	}
 
 	virtual LRESULT __cdecl onMessage( MsgOpt& opt ){
-		UINT id = opt._wParam;
-		UINT code = opt._lParam;
+		UIntStd id = opt._wParam;
+		UIntStd code = opt._lParam;
 		HWND hwnd = NULL;
 
 		if( WM_COMMAND == opt._message ){
@@ -189,7 +189,7 @@ public:
 		}
 
 		// The program return-value is 0 - The value that PostQuitMessage() gave.
-		return msg.wParam;
+		return (int)msg.wParam;
 	}
 };
 
@@ -303,7 +303,7 @@ protected:
 	NOTIFYICONDATA _notifyIconData;
 
 	template< typename T >
-	inline bool onTray( T handler, UINT code ){
+	inline bool onTray( T handler, UIntStd code ){
 		return this->onMessage( handler, WM_TRAY, MessageMapNull, NULL, code );
 	}
 

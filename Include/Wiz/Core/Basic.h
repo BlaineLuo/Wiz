@@ -211,6 +211,24 @@ struct GetInverseType< wchar_t* >{
 };
 
 // ============================================================
+typedef signed __int8 SInt8;
+typedef unsigned __int8 UInt8;
+typedef signed __int16 SInt16;
+typedef unsigned __int16 UInt16;
+typedef signed __int32 SInt32;
+typedef unsigned __int32 UInt32;
+typedef signed __int64 SInt64;
+typedef unsigned __int64 UInt64;
+
+#ifndef _WIN64
+	typedef SInt32 SIntStd;
+	typedef UInt32 UIntStd;
+#else
+	typedef SInt64 SIntStd;
+	typedef UInt64 UIntStd;
+#endif
+
+// ============================================================
 template< typename T >
 struct IsSigned{
 	enum{ _value = T(-1) < 0 };
@@ -259,24 +277,6 @@ template<>
 struct GetHalvedType< unsigned __int64 >{
 	typedef unsigned int Type;
 };
-
-// ============================================================
-typedef signed __int8 SInt8;
-typedef unsigned __int8 UInt8;
-typedef signed __int16 SInt16;
-typedef unsigned __int16 UInt16;
-typedef signed __int32 SInt32;
-typedef unsigned __int32 UInt32;
-typedef signed __int64 SInt64;
-typedef unsigned __int64 UInt64;
-
-#ifndef _WIN64
-	typedef SInt32 SIntStd;
-	typedef UInt32 UIntStd;
-#else
-	typedef SInt64 SIntStd;
-	typedef UInt64 UIntStd;
-#endif
 
 // ============================================================
 template< typename T >

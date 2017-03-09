@@ -166,12 +166,12 @@ T* ToFormalTextT( T* text, U cent ){
 }
 
 template< typename U >
-char* ToFormalText( char* text, U cent ){
+inline char* ToFormalText( char* text, U cent ){
 	return ToFormalTextT( text, cent );
 }
 
 template< typename U >
-wchar_t* ToFormalText( wchar_t* text, U cent ){
+inline wchar_t* ToFormalText( wchar_t* text, U cent ){
 	return ToFormalTextT( text, cent );
 }
 

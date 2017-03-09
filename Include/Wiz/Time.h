@@ -176,11 +176,11 @@ public:
 		return *this;
 	}
 
-	char* operator >>( char* string ){
+	inline char* operator >>( char* string ){
 		return SystemTime::CopyTo( *this, string );
 	}
 
-	wchar_t* operator >>( wchar_t* string ){
+	inline wchar_t* operator >>( wchar_t* string ){
 		return SystemTime::CopyTo( *this, string );
 	}
 
