@@ -15,7 +15,7 @@ namespace Wiz{ namespace String{
 
 using namespace Wiz::Core;
 
-enum{ StringMaxLen = STRSAFE_MAX_CCH };
+enum{ StringMaxLen = STRSAFE_MAX_CCH / 2 };
 
 // ============================================================
 inline int Compare( char* dst, const char* src, unsigned int len = -1 ){

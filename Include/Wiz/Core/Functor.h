@@ -10,42 +10,42 @@ namespace Wiz{ namespace Core{ namespace Functor{
 
 template< typename T >
 inline T Abs( const T& a ){
-	return ( a >= 0 ? a : -a );
+	return( a >= 0 ? a : -a );
 }
 
 template< typename T >
 inline T Add( const T& a, const T& b ){
-	return ( a + b );
+	return( a + b );
 }
 
 template< typename T >
 inline T Sub( const T& a, const T& b ){
-	return ( a - b );
+	return( a - b );
 }
 
 template< typename T >
 inline T Division( const T& a, const T& b ){
-	return ( b > 0 ? ( a / b ) : 0 );
+	return( b > 0 ? ( a / b ) : 0 );
 }
 
 template< typename T >
 inline T AddAssign( T& a, const T& b ){
-	return ( a += b );
+	return( a += b );
 }
 
 template< typename T >
 inline T SubAssign( T& a, const T& b ){
-	return ( a -= b );
+	return( a -= b );
 }
 
 template< typename T >
 inline T DivisionAssign( T& a, const T& b ){
-	return ( b > 0 ? ( a /= b ) : 0 );
+	return( b > 0 ? ( a /= b ) : 0 );
 }
 
 template< typename T >
 inline bool Equal( const T& a, const T& b ){
-	return ( a == b );
+	return( a == b );
 }
 
 template< typename T >

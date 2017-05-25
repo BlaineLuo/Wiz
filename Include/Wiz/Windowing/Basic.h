@@ -444,9 +444,11 @@ public:
 		this->sendMessage( WM_SETICON, ICON_BIG, (LPARAM)icon );
 	}
 
+#ifndef _WIN32_WCE
 	inline void setCursor( HCURSOR cursor ){
 		::SetClassLong( *this, GCLP_HCURSOR, (DWORD)cursor );
 	}
+#endif
 
 	inline void setFocus(){
 		::SetFocus( *this );

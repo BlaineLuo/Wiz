@@ -198,7 +198,7 @@ public:
 };
 
 // ============================================================
-template< typename Object, typename SyncObj >
+template< typename Object, typename SyncObj = Event >
 class Trigger{
 
 	typedef DWORD(__cdecl Object::*PtrMethod)( ... );
@@ -211,9 +211,9 @@ class Trigger{
 
 	void __cdecl process(){
 		while( 1 ){
-			DWORD ret = ::WaitForMultipleObjectsEx( 1, _syncObj.getHandleAddress(), true, _intervalMilliseconds, false );
+			DWORD ret = ::WaitForSingleObject( _syncObj, _intervalMilliseconds );
 			( _object->*_method )();
-		}// ========End of Thread Loop.========
+		}
 	}
 
 public:
@@ -295,7 +295,7 @@ public:
 	}
 
 	bool pop( Entry* entry, DWORD milliseconds = INFINITE ){
-		if( ::WaitForMultipleObjects( 1, _semaphore.getHandleAddress(), false, milliseconds ) != WAIT_OBJECT_0 )
+		if( WAIT_OBJECT_0 != ::WaitForSingleObject( _semaphore, milliseconds ) )
 			return false;
 		return this->Parent::pop( entry );
 	}

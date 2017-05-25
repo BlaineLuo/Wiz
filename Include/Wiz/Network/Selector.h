@@ -22,7 +22,7 @@ struct Context{
 
 // ============================================================
 template< unsigned int MaxCount >
-class Selector : protected Pool< Context, MaxCount >{
+class Selector : public Pool< Context, MaxCount >{
 
 public:
 	enum IoType{
@@ -192,7 +192,7 @@ public:
 
 	bool buildUdp( Socket& socket, TCHAR* localIp, WORD localPort, bool isReuseAddress = false ){
 		if( !socket.create( Protocol( AF_INET, SOCK_DGRAM ) )
-		 || !socket.setReuseAddress( true )
+		 || !socket.setReuseAddress( isReuseAddress )
 		 || !socket.bind( SockAddr( localIp, localPort ) )
 		 || !this->observe( socket ) ){
 			Reconstruct( &socket );
@@ -201,8 +201,8 @@ public:
 		return true;
 	}
 
-	bool buildMulticastUdp( Socket& socket, TCHAR* localIp, WORD localPort, TCHAR* groupIp = _T(MULTICAST_IP) ){
-		if( !this->buildUdp( socket, localIp, localPort )
+	bool buildMulticastUdp( Socket& socket, TCHAR* localIp, WORD localPort, TCHAR* groupIp, bool isReuseAddress = false ){
+		if( !this->buildUdp( socket, localIp, localPort, isReuseAddress )
 		 || !socket.enterMulticastGroup( groupIp, localIp )
 		 || !socket.setMulticastTtl() )
 			return false;
@@ -250,15 +250,16 @@ struct TimeVal : Structure< timeval >{
 // ============================================================
 // @Brief: Berkeley style Selector
 // ============================================================
-class NativeSelector : public Selector< FD_SETSIZE >{
+template< unsigned int MaxCount >
+class NativeSelector : public Selector< ArrangeType< MaxCount, 1, FD_SETSIZE >::_value >{
 
 protected:
 	Trigger< NativeSelector, Event > _trigger;
 	FdSet _fdSet;
 
-	DEFINE_SINGLE_EX( NativeSelector,
+	inline NativeSelector(){
 		_trigger.create( this, &NativeSelector::trigger, 1 );
-	, ; );
+	}
 
 	inline int select( timeval* timeout = NULL ){
 		return ::select( 0, &_fdSet, NULL, NULL, timeout );
@@ -284,7 +285,7 @@ protected:
 
 		this->prepare();
 
-		int eventCount = this->select();
+		int eventCount = this->select( &TimeVal() );
 		if( SOCKET_ERROR == eventCount )
 			return;
 
@@ -304,6 +305,8 @@ protected:
 
 			else if( socket.isUdp() )
 				this->onRecvUdp( entry );
+
+			matchCount++;
 		}
 	}
 };

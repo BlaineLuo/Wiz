@@ -122,7 +122,7 @@ public:
 		this->setHandle( ::InternetConnect(
 			internet,
 			opt._server,
-			opt._port,
+			(WORD)opt._port,
 			opt._username,
 			opt._password,
 			opt._service,

@@ -279,6 +279,12 @@ struct GetHalvedType< unsigned __int64 >{
 };
 
 // ============================================================
+template< UIntStd Var, UIntStd Min, UIntStd Max >
+struct ArrangeType{
+	enum : UIntStd{ _value = ( Var < Min ? Min : ( Var > Max ? Max : Var ) ) };
+};
+
+// ============================================================
 template< typename T >
 inline void Construct( T* p ){
 	::new( p ) T();
